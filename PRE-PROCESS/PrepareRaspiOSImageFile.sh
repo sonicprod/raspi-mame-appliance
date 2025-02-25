@@ -9,6 +9,9 @@
 FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
 IMGFILE=raspios-lite-arm64-latest.img
 
+# Ask for sudo password at the beginning of the script so it can run uninterrupted
+sudo echo -n
+
 echo "=========== Downloading and extracting the latest RaspiOS Lite arm64..."
 # Get the latest RaspiOS Lite for arm64
 wget $FETCHURL -O ${IMGFILE}.xz
