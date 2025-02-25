@@ -1,5 +1,8 @@
 #/bin/bash
 
+# Updated: 2025-02-25
+# Author: Benoit Bégin
+# 
 # This script:
 #   - Download the latest official image file of Raspberry Pi OS Lite (arm64)
 #   - Expand the 2nd partition and the ext4 root filesystem with an additional 16 GB of space
@@ -12,16 +15,17 @@ IMGFILE=raspios-lite-arm64-latest.img
 # Ask for sudo password at the beginning of the script so it can run uninterrupted
 sudo echo -n
 
-echo "=========== Downloading and extracting the latest RaspiOS Lite arm64..."
+echo "=========== Downloading the latest RaspiOS Lite arm64..."
 # Get the latest RaspiOS Lite for arm64
 wget $FETCHURL -O ${IMGFILE}.xz
 
+echo "=========== Extracting the compressed image file..."
 # Decompress the archive
 unxz ${IMGFILE}.xz
 
 echo "=========== PARTITIONS OPERATIONS ==========="
 # Get the current partition table
-DUMP=$(sfdisk -d $IMGFILE)
+PARTTBL=$(sfdisk -d $IMGFILE)
 
 # Rootfs partition is #2
 PARTNUM=2
@@ -37,7 +41,7 @@ echo ", +16G" | sfdisk -N 2 $IMGFILE
 # Find start offset of partition PARTNUM
 while read DEV COL VAR START TAIL; do
   [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR" = "start=" ] && export OFFSET=$((${START//,/}*512))
-done <<< $DUMP
+done <<< $PARTTBL
 
 # Attach the image from offset to loop0 device
 echo "=========== Attaching partition #$PARTNUM to /dev/loop0 device..."
@@ -56,12 +60,12 @@ echo "=========== Detaching partition #$PARTNUM from /dev/loop0 device..."
 sudo losetup -d /dev/loop0
 
 # We re-read the new partition table
-DUMP=$(sfdisk -d $IMGFILE)
+PARTTBL=$(sfdisk -d $IMGFILE)
 
 # Find end offset of partition PARTNUM
 while read DEV COL VAR1 START VAR2 SIZE TAIL; do
   [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR1" = "start=" ] && export ROOTEND=$((${START//,/}+${SIZE//,/}))
-done <<< $DUMP
+done <<< $PARTTBL
 
 # Grow the image file: add 100 MB to make space for f2fs data rw partition
 echo "=========== Adding +100M to image file $IMGFILE..."
@@ -82,7 +86,7 @@ PARTNUM=1
 # Find start offset of partition PARTNUM
 while read DEV COL VAR START TAIL; do
   [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR" = "start=" ] && export OFFSET=$((${START//,/}*512))
-done <<< $DUMP
+done <<< $PARTTBL
 
 # Attach the image from offset to loop0 device
 echo "=========== Attaching partition #$PARTNUM to /dev/loop0 device..."
