@@ -53,7 +53,7 @@ echo "=========== Adding +100M to image file $IMGFILE..."
 truncate --size=+100M $IMGFILE
 
 # Create new partition with all available space, type Linux (83)
-echo "=========== Creating/adding a new partition of type 83 (Linux) for the r/w f2fs data partition..."
+echo "=========== Creating/adding a new partition of type 83 (Linux) for f2fs data rw partition..."
 echo "$ROOTEND,,83;" | sfdisk --append $IMGFILE
 
 echo "=========== DONE!"
