@@ -36,6 +36,7 @@ sudo fdisk -l $IMGFILE
 
 # We re-read the new partition table
 DUMP=$(sfdisk -d $IMGFILE)
+
 # Find end offset of partition PARTNUM
 while read DEV COL VAR1 START VAR2 SIZE TAIL; do
   [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR1" = "start=" ] && export ROOTEND=$((${START//,/}+${SIZE//,/}))
