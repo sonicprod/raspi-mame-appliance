@@ -1,8 +1,10 @@
 #/bin/bash
 
-# This script take as an input the raw image file of Raspberry Pi OS Lite and:
+# This script:
+#   - Download the latest official image file of Raspberry Pi OS Lite (arm64)
 #   - Expand the 2nd partition and the ext4 root filesystem with an additional 16 GB of space
 #   - Add a 3rd partition (type 83, Linux) with a size of 100 MB
+#   - Enable SSH Server on first boot
 
 FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
 IMGFILE=raspios-lite-arm64-latest.img
@@ -49,9 +51,6 @@ sudo resize2fs /dev/loop0
 # Detach from the loop0 device
 echo "=========== Detaching partition #$PARTNUM from /dev/loop0 device..."
 sudo losetup -d /dev/loop0
-
-# Back to image disk mode, we print the new partition table
-# sudo fdisk -l $IMGFILE
 
 # We re-read the new partition table
 DUMP=$(sfdisk -d $IMGFILE)
