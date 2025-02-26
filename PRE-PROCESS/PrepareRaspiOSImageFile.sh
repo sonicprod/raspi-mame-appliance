@@ -104,7 +104,7 @@ echo "=========== Enabling SSH with ssh dummy file..."
 
 echo "=========== Auto-creating pi user with default password (raspberry)..."
 # The creation of the pi user will be done on first boot
-echo -n "pi:$(echo -n 'raspberry' | openssl passwd -6 -stdin)" | sudo tee -a /mnt/loop0/userconf.txt
+echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee -a /mnt/loop0/userconf.txt
 
 echo "=========== Unmounting boot partition..."
 sudo umount /mnt/loop0
