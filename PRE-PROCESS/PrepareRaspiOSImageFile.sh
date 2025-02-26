@@ -10,19 +10,22 @@
 #   - Enable SSH Server on first boot
 #   - Auto-creating pi user with default password (raspberry)
 
-FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
-IMGFILE=raspios-lite-arm64-latest.img
-
 # Ask for sudo password at the beginning of the script so it can run uninterrupted
 sudo echo -n
 
+FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
 echo "=========== Downloading the latest RaspiOS Lite arm64..."
 # Get the latest RaspiOS Lite for arm64
-wget $FETCHURL -O ${IMGFILE}.xz
+wget --trust-server-names $FETCHURL
+
+IMGFILE=$(ls -d -- [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.xz)
 
 echo "=========== Extracting the compressed image file..."
 # Decompress the archive
-unxz ${IMGFILE}.xz
+unxz $IMGFILE
+
+# Remove the .xz extension
+IMGFILE=${IMGFILE%.*}
 
 echo "=========== PARTITIONS OPERATIONS ==========="
 # Get the current partition table
