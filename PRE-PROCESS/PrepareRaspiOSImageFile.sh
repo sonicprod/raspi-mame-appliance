@@ -18,7 +18,7 @@ echo "=========== Downloading the latest RaspiOS Lite arm64..."
 # Get the latest RaspiOS Lite for arm64
 wget --trust-server-names $FETCHURL
 
-IMGFILE=$(ls -d -- [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.xz)
+IMGFILE=$(ls -d -- 20[2-9][0-9]-[0-9][0-9]-[0-9][0-9]*.xz)
 
 echo "=========== Extracting the compressed image file..."
 # Decompress the archive
