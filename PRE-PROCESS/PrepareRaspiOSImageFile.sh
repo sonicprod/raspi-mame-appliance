@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-02-25
+# Updated: 2025-02-26
 # Author: Benoit Bégin
 # 
 # This script:
@@ -8,6 +8,7 @@
 #   - Expand the 2nd partition and the ext4 root filesystem with an additional 16 GB of space
 #   - Add a 3rd partition (type 83, Linux) with a size of 100 MB
 #   - Enable SSH Server on first boot
+#   - Auto-creating pi user with default password (raspberry)
 
 FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
 IMGFILE=raspios-lite-arm64-latest.img
@@ -25,7 +26,7 @@ unxz ${IMGFILE}.xz
 
 echo "=========== PARTITIONS OPERATIONS ==========="
 # Get the current partition table
-PARTTBL=$(sfdisk -d $IMGFILE)
+PARTTAB=$(sfdisk -d $IMGFILE)
 
 # Rootfs partition is #2
 PARTNUM=2
@@ -38,14 +39,14 @@ truncate --size=+16G $IMGFILE
 echo "=========== Expanding root fs partition #$PARTNUM..."
 echo ", +16G" | sfdisk -N 2 $IMGFILE
 
-# Find start offset of partition PARTNUM
+# Find start OFFSETP2 of partition PARTNUM
 while read DEV COL VAR START TAIL; do
-  [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR" = "start=" ] && export OFFSET=$((${START//,/}*512))
-done <<< $PARTTBL
+  [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR" = "start=" ] && export OFFSETP2=$((${START//,/}*512))
+done <<< $PARTTAB
 
-# Attach the image from offset to loop0 device
+# Attach the image from OFFSETP2 to loop0 device
 echo "=========== Attaching partition #$PARTNUM to /dev/loop0 device..."
-sudo losetup -o $OFFSET /dev/loop0 $IMGFILE
+sudo losetup -o $OFFSETP2 /dev/loop0 $IMGFILE
 
 # Check the root filesystem first
 echo "=========== First, check the filesystem integrity..."
@@ -60,12 +61,12 @@ echo "=========== Detaching partition #$PARTNUM from /dev/loop0 device..."
 sudo losetup -d /dev/loop0
 
 # We re-read the new partition table
-PARTTBL=$(sfdisk -d $IMGFILE)
+PARTTAB=$(sfdisk -d $IMGFILE)
 
-# Find end offset of partition PARTNUM
+# Find end OFFSETP1 of partition PARTNUM
 while read DEV COL VAR1 START VAR2 SIZE TAIL; do
   [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR1" = "start=" ] && export ROOTEND=$((${START//,/}+${SIZE//,/}))
-done <<< $PARTTBL
+done <<< $PARTTAB
 
 # Grow the image file: add 100 MB to make space for f2fs data rw partition
 echo "=========== Adding +100M to image file $IMGFILE..."
@@ -83,14 +84,15 @@ echo "=========== Enabling SSH Server on first boot..."
 
 # Bootfs partition is #1
 PARTNUM=1
-# Find start offset of partition PARTNUM
-while read DEV COL VAR START TAIL; do
-  [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR" = "start=" ] && export OFFSET=$((${START//,/}*512))
-done <<< $PARTTBL
 
-# Attach the image from offset to loop0 device
+# Find start OFFSETP1 of partition PARTNUM
+while read DEV COL VAR START TAIL; do
+  [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR" = "start=" ] && export OFFSETP1=$((${START//,/}*512))
+done <<< $PARTTAB
+
+# Attach the image from OFFSETP1 to loop0 device
 echo "=========== Attaching partition #$PARTNUM to /dev/loop0 device..."
-sudo losetup -o $OFFSET /dev/loop0 $IMGFILE
+sudo losetup -o $OFFSETP1 /dev/loop0 $IMGFILE
 
 # Mount the boot partition
 echo "=========== Mounting boot partition..."
@@ -100,8 +102,12 @@ sudo mount /dev/loop0 /mnt/loop0
 echo "=========== Enabling SSH with ssh dummy file..."
 [ ! -f /mnt/loop0/ssh ] && sudo touch /mnt/loop0/ssh
 
+echo "=========== Auto-creating pi user with default password (raspberry)..."
+# The creation of the pi user will be done on first boot
+echo -n "pi:$(echo -n 'raspberry' | openssl passwd -6 -stdin)" | sudo tee -a /mnt/loop0/userconf.txt
+
 echo "=========== Unmounting boot partition..."
-sudo umount /dev/loop0
+sudo umount /mnt/loop0
 sudo rmdir /mnt/loop0
 
 # Detach from the loop0 device
