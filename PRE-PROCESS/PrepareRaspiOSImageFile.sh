@@ -10,6 +10,12 @@
 #   - Enable SSH Server on first boot
 #   - Auto-creating pi user with default password (raspberry)
 
+IMGFILE=$(ls -d -- 20[2-9][0-9]-[0-9][0-9]-[0-9][0-9]*.xz 2>/dev/null)
+if [[ -n $IMGFILE ]] && [ -f "$IMGFILE" ]; then
+  echo "$IMGFILE already exist (already processed), aborting..."
+  exit
+fi
+
 # Ask for sudo password at the beginning of the script so it can run uninterrupted
 sudo echo -n
 
@@ -19,9 +25,14 @@ echo "=========== Downloading the latest RaspiOS Lite arm64..."
 wget --trust-server-names $FETCHURL
 
 IMGFILE=$(ls -d -- 20[2-9][0-9]-[0-9][0-9]-[0-9][0-9]*.xz)
+if [ ! -f "$IMGFILE" ]; then
+  echo "$IMGFILE does not exist, aborting..."
+  exit
+fi
 
 echo "=========== Extracting the compressed image file..."
 # Decompress the archive
+[ -f ${IMGFILE%.*} ] && rm ${IMGFILE%.*}
 unxz $IMGFILE
 
 # Remove the .xz extension
