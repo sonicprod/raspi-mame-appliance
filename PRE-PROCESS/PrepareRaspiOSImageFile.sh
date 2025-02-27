@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-02-26
+# Updated: 2025-02-27
 # Author: Benoit Bégin
 # 
 # This script:
@@ -10,7 +10,9 @@
 #   - Enable SSH Server on first boot
 #   - Auto-creating pi user with default password (raspberry)
 
-IMGFILE=$(ls -d -- 20[2-9][0-9]-[0-9][0-9]-[0-9][0-9]*.xz 2>/dev/null)
+IMGFILE=$(find . -maxdepth 1 -type f -name '20*.img.xz' -print)
+IMGFILE=${IMGFILE#"./"}	# Remove the ./ prefix
+
 if [ -n $IMGFILE ] && [ -f "$IMGFILE" ]; then
   echo "$IMGFILE already exist (already processed), aborting..."
   exit
@@ -24,7 +26,9 @@ echo "=========== Downloading the latest RaspiOS Lite arm64..."
 # Get the latest RaspiOS Lite for arm64
 wget --trust-server-names $FETCHURL
 
-IMGFILE=$(ls -d -- 20[2-9][0-9]-[0-9][0-9]-[0-9][0-9]*.xz)
+IMGFILE=$(find . -maxdepth 1 -type f -ctime -1 -name '20*.img.xz' -print)
+IMGFILE=${IMGFILE#"./"}	# Remove the ./ prefix
+
 if [ ! -f "$IMGFILE" ]; then
   echo "$IMGFILE does not exist, aborting..."
   exit
@@ -131,5 +135,8 @@ sudo losetup -d /dev/loop0
 # From /mnt/loop0/cmdline.txt 
 #  console=serial0,115200 console=tty1 root=PARTUUID=8a438930-02 rootfstype=ext4 fsck.repair=yes rootwait quiet init=/usr/lib/raspberrypi-sys-mods/firstboot
 # We need to remove this part at the end "init=/usr/lib/raspberrypi-sys-mods/firstboot"
+
+# Add _Prepped suffix to image file
+mv $IMGFILE ${IMGFILE%.img}_Prepped.img
 
 echo "=========== DONE!"
