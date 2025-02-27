@@ -122,7 +122,7 @@ echo "=========== Enabling SSH with ssh dummy file..."
 
 echo "=========== Auto-creating pi user with default password (raspberry)..."
 # The creation of the pi user will be done on first boot
-[ ! -f /mnt/loop0/userconf.txt ] && echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee -a /mnt/loop0/userconf.txt
+[ ! -f /mnt/loop0/userconf.txt ] && echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee /mnt/loop0/userconf.txt > /dev/null
 
 echo "=========== Unmounting boot partition..."
 sudo umount /mnt/loop0
@@ -136,7 +136,7 @@ sudo losetup -d /dev/loop0
 #  console=serial0,115200 console=tty1 root=PARTUUID=8a438930-02 rootfstype=ext4 fsck.repair=yes rootwait quiet init=/usr/lib/raspberrypi-sys-mods/firstboot
 # We need to remove this part at the end "init=/usr/lib/raspberrypi-sys-mods/firstboot"
 
-# Add _Prepped suffix to image file
+# Add _Prepped suffix to image filename
 mv $IMGFILE ${IMGFILE%.img}_Prepped.img
 
 echo "=========== DONE!"
