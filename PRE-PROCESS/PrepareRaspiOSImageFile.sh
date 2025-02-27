@@ -77,7 +77,7 @@ sudo losetup -d /dev/loop0
 # We re-read the new partition table
 PARTTAB=$(sfdisk -d $IMGFILE)
 
-# Find end OFFSETP1 of partition PARTNUM
+# Find end offset of partition PARTNUM
 while read DEV COL VAR1 START VAR2 SIZE TAIL; do
   [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR1" = "start=" ] && export ROOTEND=$((${START//,/}+${SIZE//,/}))
 done <<< $PARTTAB
@@ -99,7 +99,7 @@ echo "=========== Enabling SSH Server on first boot..."
 # Bootfs partition is #1
 PARTNUM=1
 
-# Find start OFFSETP1 of partition PARTNUM
+# Find start offset of partition PARTNUM
 while read DEV COL VAR START TAIL; do
   [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR" = "start=" ] && export OFFSETP1=$((${START//,/}*512))
 done <<< $PARTTAB
