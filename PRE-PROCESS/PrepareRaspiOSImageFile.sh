@@ -11,7 +11,7 @@
 #   - Auto-creating pi user with default password (raspberry)
 
 IMGFILE=$(ls -d -- 20[2-9][0-9]-[0-9][0-9]-[0-9][0-9]*.xz 2>/dev/null)
-if [[ -n $IMGFILE ]] && [ -f "$IMGFILE" ]; then
+if [ -n $IMGFILE ] && [ -f "$IMGFILE" ]; then
   echo "$IMGFILE already exist (already processed), aborting..."
   exit
 fi
