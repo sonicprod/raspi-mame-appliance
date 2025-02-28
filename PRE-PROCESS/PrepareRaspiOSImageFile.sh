@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-02-27
+# Updated: 2025-02-28
 # Author: Benoit Bégin
 # 
 # This script:
@@ -83,7 +83,7 @@ PARTTAB=$(sfdisk -d $IMGFILE)
 
 # Find end offset of partition PARTNUM
 while read DEV COL VAR1 START VAR2 SIZE TAIL; do
-  [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR1" = "start=" ] && export ROOTEND=$((${START//,/}+${SIZE//,/}))
+  [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR1" = "start=" ] && export OFFSETP3=$((${START//,/}+${SIZE//,/}))
 done <<< $PARTTAB
 
 # Grow the image file: add 100 MB to make space for f2fs data rw partition
@@ -92,7 +92,19 @@ truncate --size=+100M $IMGFILE
 
 # Create new partition with all available space, type Linux (83)
 echo "=========== Creating/adding a new partition of type 83 (Linux) for f2fs data rw partition..."
-echo "$ROOTEND,,83;" | sfdisk --append $IMGFILE
+echo "$OFFSETP3,,83;" | sfdisk --append $IMGFILE
+
+# Attach the image from OFFSETP3 to loop0 device
+echo "=========== Attaching the 3rd partition to /dev/loop0 device..."
+sudo losetup -o $OFFSETP3 /dev/loop0 $IMGFILE
+
+echo "=========== Formatting the 3rd partition with F2FS filesystem..."
+command -v mkfs.f2fs >/dev/null 2>&1 || sudo apt install f2fs-tools -y
+sudo mkfs.f2fs -l data /dev/loop0
+
+# Detach from the loop0 device
+echo "=========== Detaching the 3rd partition from /dev/loop0 device..."
+sudo losetup -d /dev/loop0
 
 echo "=========== CUSTOMIZATIONS OPERATIONS ==========="
 
@@ -136,7 +148,7 @@ sudo losetup -d /dev/loop0
 #  console=serial0,115200 console=tty1 root=PARTUUID=8a438930-02 rootfstype=ext4 fsck.repair=yes rootwait quiet init=/usr/lib/raspberrypi-sys-mods/firstboot
 # We need to remove this part at the end "init=/usr/lib/raspberrypi-sys-mods/firstboot"
 
-# Add _Prepped suffix to image filename
+# Add _Prepped suffix to image file
 mv $IMGFILE ${IMGFILE%.img}_Prepped.img
 
 echo "=========== DONE!"
