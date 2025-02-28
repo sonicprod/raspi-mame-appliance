@@ -7,6 +7,7 @@
 #   - Download the latest official image file of Raspberry Pi OS Lite (arm64)
 #   - Expand the 2nd partition and the ext4 root filesystem with an additional 16 GB of space
 #   - Add a 3rd partition (type 83, Linux) with a size of 100 MB
+#   - Format the 3rd partition with f2fs filesystem
 #   - Enable SSH Server on first boot
 #   - Auto-creating pi user with default password (raspberry)
 
