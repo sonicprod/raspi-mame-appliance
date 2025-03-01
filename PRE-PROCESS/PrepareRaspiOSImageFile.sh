@@ -97,7 +97,7 @@ echo "$OFFSETP3,,83;" | sfdisk --append $IMGFILE
 
 # Attach the image from OFFSETP3 to loop0 device
 echo "=========== Attaching the 3rd partition to /dev/loop0 device..."
-sudo losetup -o $OFFSETP3 /dev/loop0 $IMGFILE
+sudo losetup -o $(($OFFSETP3*512)) /dev/loop0 $IMGFILE
 
 echo "=========== Formatting the 3rd partition with F2FS filesystem..."
 command -v mkfs.f2fs >/dev/null 2>&1 || sudo apt install f2fs-tools -y
@@ -121,14 +121,10 @@ while read DEV COL VAR START TAIL; do
   [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR" = "start=" ] && export OFFSETP1=$((${START//,/}*512))
 done <<< $PARTTAB
 
-# Attach the image from OFFSETP1 to loop0 device
-echo "=========== Attaching partition #$PARTNUM to /dev/loop0 device..."
-sudo losetup -o $OFFSETP1 /dev/loop0 $IMGFILE
-
 # Mount the boot partition
 echo "=========== Mounting boot partition..."
 [ ! -d /mnt/loop0 ] && sudo mkdir /mnt/loop0
-sudo mount /dev/loop0 /mnt/loop0
+sudo mount -o offset=$OFFSETP1 /dev/loop0 /mnt/loop0
 
 echo "=========== Enabling SSH with ssh dummy file..."
 [ ! -f /mnt/loop0/ssh ] && sudo touch /mnt/loop0/ssh
