@@ -124,7 +124,7 @@ done <<< $PARTTAB
 # Mount the boot partition
 echo "=========== Mounting boot partition..."
 [ ! -d /mnt/loop0 ] && sudo mkdir /mnt/loop0
-sudo mount -o offset=$OFFSETP1 /dev/loop0 /mnt/loop0
+sudo mount -o offset=$OFFSETP1 $IMGFILE /mnt/loop0
 
 echo "=========== Enabling SSH with ssh dummy file..."
 [ ! -f /mnt/loop0/ssh ] && sudo touch /mnt/loop0/ssh
@@ -136,10 +136,6 @@ echo "=========== Auto-creating pi user with default password (raspberry)..."
 echo "=========== Unmounting boot partition..."
 sudo umount /mnt/loop0
 sudo rmdir /mnt/loop0
-
-# Detach from the loop0 device
-echo "=========== Detaching partition #$PARTNUM from /dev/loop0 device..."
-sudo losetup -d /dev/loop0
 
 # From /mnt/loop0/cmdline.txt 
 #  console=serial0,115200 console=tty1 root=PARTUUID=8a438930-02 rootfstype=ext4 fsck.repair=yes rootwait quiet init=/usr/lib/raspberrypi-sys-mods/firstboot
