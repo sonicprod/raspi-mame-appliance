@@ -1,4 +1,12 @@
-# Création de la partition séparée en lecture-écriture et déplacement de certains fichiers vers celle-ci
+#/bin/bash
+
+# Updated: 2025-03-30
+# Author: Benoit Bégin
+# 
+# This script:
+#  - Create and format the /data r/w partition with F2FS filesystem
+#  - Move some files to this newly created partition
+#  - Make some symlinks to the newly created partition
 
 # La partition /data sera en lecture/écriture et utilisera 
 # le système de fichiers F2FS (Flash-Friendly File System)
