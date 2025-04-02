@@ -1,0 +1,13 @@
+[Unit]
+Description=MAME Automatic Artwork Management service
+After=network.target mame-autostart.service
+
+[Service]
+Type=simple
+ExecStart=/home/pi/scripts/mame-artwork-mgmt.sh
+KillSignal=SIGINT
+TimeoutStopSec=5
+Restart=always
+
+[Install]
+WantedBy=sysinit.target
