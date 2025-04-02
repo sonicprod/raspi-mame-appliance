@@ -1,0 +1,13 @@
+[Unit]
+Description=MAME Shutdown/Poweroff/Reboot Splash Screen service
+DefaultDependencies=no
+Before=halt.target
+Conflicts=mame-bootsplash.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/fim -q --no-history /home/pi/splash/mame-shutdown.jpg
+SuccessExitStatus=42
+
+[Install]
+WantedBy=reboot.target halt.target poweroff.target
