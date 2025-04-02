@@ -1,0 +1,21 @@
+[Unit]
+Description=MAME Appliance Autostart service
+Conflicts=getty@tty1.service smbd.service nmbd.service rng-tools.service cron.service mame-artwork-mgmt.service
+Requires=local-fs.target
+After=local-fs.target
+ConditionPathExists=/home/pi/settings
+
+[Service]
+User=pi
+Group=pi
+PAMName=login
+Type=simple
+EnvironmentFile=/home/pi/settings
+ExecStart=/home/pi/scripts/autostart.sh
+Restart=on-abort
+RestartSec=5
+TTYPath=/dev/tty1
+StandardInput=tty
+
+[Install]
+WantedBy=multi-user.target
