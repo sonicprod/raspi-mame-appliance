@@ -1,0 +1,14 @@
+[Unit]
+Description=MAME Boot Splash Screen service
+DefaultDependencies=no
+After=local-fs.target
+
+[Service]
+Type=simple
+StandardInput=tty
+StandardOutput=tty
+ExecStart=/usr/bin/fim -q --no-history /home/pi/splash/mame-boot.jpg
+SuccessExitStatus=42
+
+[Install]
+WantedBy=sysinit.target
