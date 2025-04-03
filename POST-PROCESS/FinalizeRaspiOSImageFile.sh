@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# - Mount the boot partition
+# - Add the init=/usr/lib/raspi-config/Expand-Data-Partition.sh to $BOOTDIR/cmdline.txt
+# - Mount the rootfs partition
+# - Fill the free space with zeros (/dev/zero) to make a more compact .img file, once compressed
+# - Compress the image file with gzip
+# - Print a message to inform that the SD card is ready to be published
+
+
+
+
+# TO BE UPDATED - TO BE UPDATED - TO BE UPDATED - TO BE UPDATED - TO BE UPDATED -TO BE UPDATED -
+
 if [ ! $1 ]; then
     echo Usage: $0 VER [zero]
     echo '  Where VER is the 4-digit version number of MAME to update (for example: 0224).'
