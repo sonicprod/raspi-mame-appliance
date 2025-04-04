@@ -23,6 +23,9 @@ if [ -f $CFGFILENAME ]; then
   while IFS="= " read VAR VALUE; do
     [ ! -z $VAR ] && [ "${VAR:0:1}" != "#" ] && export $VAR="$VALUE"
   done < $CFGFILENAME
+else
+  echo "Config file ($CFGFILENAME) was not found! Fatal error, end of script."
+  exit
 fi
 
 BOOTDIR=$(findmnt /dev/mmcblk0p1 -n -o TARGET)
