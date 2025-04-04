@@ -76,6 +76,27 @@ sudo e2fsck -f /dev/loop0
 echo "=========== Then, resize this filesystem to expand/use all available partition space..."
 sudo resize2fs /dev/loop0
 
+echo "=========== Mounting the root filesystem..."
+# Mount the root filesystem
+[ ! -d /mnt/loop0 ] && sudo mkdir /mnt/loop0
+sudo mount /dev/loop0 /mnt/loop0
+
+# We fetch bootstrap.sh from the Github repo...
+wget https://github.com/sonicprod/raspi-mame-appliance/blob/9c7a686c745dbe86b9aca20291e15349cdd07ca4/PRE-PROCESS/bootstrap.sh
+
+if [ ! -f bootstrap.sh ]; then
+  echo "Error downloading bootstrap.sh from the Github repo!"
+  exit
+fi
+
+# And we place it in the rootfs for the first execution
+sudo mv bootstrap.sh /mnt/loop0/usr/lib/raspi-config/
+sudo chmod +x /mnt/loop0/usr/lib/raspi-config/bootstrap.sh
+
+echo "=========== Unmounting the root filesystem..."
+# Unmount the root filesystem
+sudo umount /dev/loop0
+
 # Detach from the loop0 device
 echo "=========== Detaching partition #$PARTNUM from /dev/loop0 device..."
 sudo losetup -d /dev/loop0
