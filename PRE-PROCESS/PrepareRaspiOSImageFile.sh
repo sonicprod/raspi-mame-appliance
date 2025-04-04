@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-02-28
+# Updated: 2025-04-04
 # Author: Benoit Bégin
 # 
 # This script:
@@ -10,6 +10,7 @@
 #   - Format the 3rd partition with f2fs filesystem
 #   - Enable SSH Server on first boot
 #   - Auto-creating pi user with default password (raspberry)
+#   - Seed a branching script (bootstrap.sh) so the process can start automatically at first boot
 
 IMGFILE=$(find . -maxdepth 1 -type f -name '20*.img.xz' -print)
 IMGFILE=${IMGFILE#"./"}	# Remove the ./ prefix
@@ -133,13 +134,15 @@ echo "=========== Auto-creating pi user with default password (raspberry)..."
 # The creation of the pi user will be done on first boot
 [ ! -f /mnt/loop0/userconf.txt ] && echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee /mnt/loop0/userconf.txt > /dev/null
 
+# Seeding the bootstrap.sh initial script...
+# 1. We remove this part at the end "init=/usr/lib/raspberrypi-sys-mods/firstboot"
+sudo sed -ie 's/init=\/usr\/lib\/raspberrypi-sys-mods\/firstboot*//g' /mnt/loop0/cmdline.txt
+# 2. We add to cmdline.txt: init=/usr/lib/raspi-config/bootstrap.sh
+sudo sed -ie 's/^console=serial0,115200.*$/& init=\/usr\/lib\/raspi-config\/bootstrap.sh/g' /mnt/loop0/cmdline.txt
+
 echo "=========== Unmounting boot partition..."
 sudo umount /mnt/loop0
 sudo rmdir /mnt/loop0
-
-# From /mnt/loop0/cmdline.txt 
-#  console=serial0,115200 console=tty1 root=PARTUUID=8a438930-02 rootfstype=ext4 fsck.repair=yes rootwait quiet init=/usr/lib/raspberrypi-sys-mods/firstboot
-# We need to remove this part at the end "init=/usr/lib/raspberrypi-sys-mods/firstboot"
 
 # Add _Prepped suffix to image file
 mv $IMGFILE ${IMGFILE%.img}_Prepped.img
