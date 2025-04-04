@@ -3,6 +3,9 @@
 # Updated: 2025-04-04
 # Author: Benoit Bégin
 # 
+# This is the "bootstrap" script that chain the "offline" preparation of the image and
+# transfer/pass the execution to the "online" configuration and build/installation steps.
+#
 # This script:
 #   - Git clone the Github repo
 #   - Read the config file and make variables global
