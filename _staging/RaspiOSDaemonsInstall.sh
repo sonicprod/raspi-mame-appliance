@@ -25,7 +25,7 @@ echo "setterm --cursor on" | tee -a /home/pi/.bashrc
 
 # Suppression des messages au démarrage...
 BOOTDIR=$(findmnt /dev/mmcblk0p1 -n -o TARGET)
-sudo sed -i "s/console=tty1/console=tty3/g" $BOOTDIR/cmdline.txt
+sudo sed -i "s/^console=tty1/console=tty3/g" $BOOTDIR/cmdline.txt
 sudo sed -i "s/^console=.*$/& logo.nologo vt.global_cursor_default=0 quiet fsck.mode=skip/g" $BOOTDIR/cmdline.txt
 
 # Affichage de l’écran de démarrage (Custom Boot Splash)
