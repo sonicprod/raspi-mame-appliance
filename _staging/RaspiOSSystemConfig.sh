@@ -9,9 +9,6 @@
 #   - Update the system's packages
 #   - Add new aliases to /home/pi/.bash_aliases
 
-GITHUB_SRCBASE=https://github.com/sonicprod/raspi-mame-appliance
-CFGFILENAME=/home/pi/raspi-mame-appliance/_staging/Config.ExportPublicImage.cfg
-
 # Initial packages update...
 sudo apt-get update && sudo apt-get upgrade -y
 # Cleanup
@@ -34,11 +31,7 @@ EOF
 # Supprimer l’avertissement (disclaimer) ci-dessous au login
 sudo rm /etc/motd
 
-# Git clone the repo to get the latest versions of the needed files and scripts...
-cd /home/pi
-git clone $GITHUB_SRCBASE
-cd raspi-mame-appliance/scripts
-
+cd /home/pi/raspi-mame-appliance/scripts
 mkdir /home/pi/scripts
 cp *.sh /home/pi/scripts
 chmod +x /home/pi/scripts/*.sh
@@ -74,13 +67,6 @@ S E R V I C E      M O D E
 
 IP Address: \4
 EOF
-
-# Load config file settings for automated/unattended image creation...
-if [ -f $CFGFILENAME ]; then
-  while IFS="= " read VAR VALUE; do
-    [ ! -z $VAR ] && [ "${VAR:0:1}" != "#" ] && export $VAR="$VALUE"
-  done < $CFGFILENAME
-fi
 
 # Timezone setup
 sudo timedatectl set-timezone $TIMEZONE
@@ -128,7 +114,4 @@ sudo apt-get install cpufrequtils -y
 grep -q GOVERNOR= /etc/init.d/cpufrequtils && sudo sed -i "s/GOVERNOR=.*$/GOVERNOR=\"performance\"/g" /etc/init.d/cpufrequtils
 sudo systemctl daemon-reload
 sudo systemctl restart cpufrequtils.service
-
-
-
 
