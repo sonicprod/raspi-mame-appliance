@@ -2,15 +2,6 @@
 
 # This script update MAME to the latest version or a specific version.
 
-# GCC compiler optimization for ARM-based systems : https://gist.github.com/fm4dd/c663217935dc17f0fc73c9c81b0aa845
-#ARCHOPTS='-mcpu=cortex-a72 -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mneon-for-64bits -funsafe-math-optimizations -munaligned-access -fexpensive-optimizations'
-
-# A tester, Pi 4.....
-ARCHOPTS32='-march=armv8-a+crc+simd -mcpu=cortex-a72 -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard -funsafe-math-optimizations -fprefetch-loop-arrays -fexpensive-optimizations'
-ARCHOPTS64='-march=armv8-a+crc+simd -mcpu=cortex-a72 -mtune=cortex-a72 -funsafe-math-optimizations -fprefetch-loop-arrays -fexpensive-optimizations'
-# A tester, Pi 5.....
-ARCHOPTS_PI5='-march=armv8.2-a+crc+simd -mcpu=cortex-a76 -mtune=cortex-a76 -funsafe-math-optimizations -fprefetch-loop-arrays -fexpensive-optimizations'
-
 MAKEOPTS='TARGETOS=linux NO_X11=1 NOWERROR=1 NO_USE_XINPUT=1 NO_USE_XINPUT_WII_LIGHTGUN_HACK=1 NO_OPENGL=1 USE_QTDEBUG=0 DEBUG=0 REGENIE=1 NO_BGFX=1 FORCE_DRC_C_BACKEND=1 NO_USE_PORTAUDIO=1 SYMBOLS=0'
 MAXTHREAD=4    # From MAME version 0.227 and up, we should use a max. of 3 threads to avoid an out of memory error.
 
@@ -122,16 +113,22 @@ else
         sudo apt-get install build-essential -y
 
         cd $MAMESRCPATH
-        [ "$(uname -m)" == "armv7l" ]  && echo MAKE CMDLINE=make -j$MAXTHREAD ARCHOPTS=\"$ARCHOPTS32\" $MAKEOPTS PLATFORM=arm
-        [ "$(uname -m)" == "aarch64" ] && echo MAKE CMDLINE=make -j$MAXTHREAD ARCHOPTS=\"$ARCHOPTS64\" $MAKEOPTS PLATFORM=arm64 PTR64=1
+        echo MAKE CMDLINE=make -j$MAXTHREAD $MAKEOPTS PLATFORM=arm64 PTR64=1
         BUILDSTART=$(date +%s)
         echo Build start time: $(date +"%T")
         echo -----------------------------------------------------------------------------------
         echo Please wait until the build is completed \(about 10 hours\)...
         echo -----------------------------------------------------------------------------------
-        [ "$(uname -m)" == "armv7l" ]  && make -j$MAXTHREAD ARCHOPTS="$ARCHOPTS32" $MAKEOPTS PLATFORM=arm
-        [ "$(uname -m)" == "aarch64" ] && make -j$MAXTHREAD $MAKEOPTS PLATFORM=arm64 PTR64=1
 
+        # Small speedup for Pi 4 (we use the binary built from a Pi 5, which is 4 times faster)
+        if [ -x /home/pi/scripts/mame ]; then
+          FOUNDMAMEVER=$(/home/pi/scripts/mame -version | cut -d' ' -f1)
+          if [ $FOUNDMAMEVER == $MAMEVER ]; then    # Version of binary found match our build version
+            mv /home/pi/scripts/mame $MAMESRCPATH
+          fi
+        fi
+        
+        [ ! -x $MAMESRCPATH/mame ] && make -j $MAXTHREAD $MAKEOPTS PLATFORM=arm64 PTR64=1
 
         echo Build time took: $(secs_to_human "$(($(date +%s) - ${BUILDSTART}))").
 
