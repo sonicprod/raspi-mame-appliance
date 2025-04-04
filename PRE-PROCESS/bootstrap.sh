@@ -29,3 +29,25 @@ BOOTDIR=$(findmnt /dev/mmcblk0p1 -n -o TARGET)
 # We remove ourself from the kernel cmdline (init=/usr/lib/raspi-config/bootstrap.sh)
 [ $BOOTDIR ] && sudo sed -ie 's/init=\/usr\/lib\/raspi-config\/bootstrap.sh//g' $BOOTDIR/cmdline.txt
 
+# Start of sequence of execution of the child-scripts...
+cd /home/pi/raspi-mame-appliance/_staging
+chmod +x *.sh
+
+# Execution of child-scripts...
+./RaspiOSSystemConfig.sh
+./RaspiOSAppsInstall.sh
+./RaspiOSDaemonsInstall.sh
+# ./MakeDataPartitionAndMoveFiles.sh
+# ./MakeRootFileSystemReadOnly.sh
+
+echo "===================================================================="
+echo "The steps are complete."
+echo "Please double-check for any errors."
+echo
+echo "If error-free, this system is now ready to be imaged to a .img file."
+echo
+read -n1 -srp "Press any key to shutdown the system ..."
+echo
+
+echo "Shutting down..."
+sudo poweroff
