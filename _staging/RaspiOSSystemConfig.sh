@@ -89,6 +89,7 @@ sudo timedatectl set-timezone $TIMEZONE
 # sudo dpkg-reconfigure locales
 
 # NTP server setup
+sudo timedatectl set-ntp true
 sudo sed -i "s/^#\{0,1\}NTP=.*$/NTP=$NTP/g" /etc/systemd/timesyncd.conf
 
 # Hostname setup
