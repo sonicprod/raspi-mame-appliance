@@ -11,6 +11,7 @@
 #   - Enable SSH Server on first boot
 #   - Auto-creating pi user with default password (raspberry)
 #   - Seed a branching script (bootstrap.sh) so the process can start automatically at first boot
+#   - Optionnaly write the prepped disk image to a physical SD Card
 
 IMGFILE=$(find . -maxdepth 1 -type f -name '20*.img.xz' -print)
 IMGFILE=${IMGFILE#"./"}	# Remove the ./ prefix
