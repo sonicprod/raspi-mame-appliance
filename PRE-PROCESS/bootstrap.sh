@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-04
+# Updated: 2025-04-06
 # Author: Benoit Bégin
 # 
 # This is the "bootstrap" script that chain the "offline" preparation of the image and
@@ -36,15 +36,18 @@ BOOTDIR=$(findmnt /dev/mmcblk0p1 -n -o TARGET)
 [ $BOOTDIR ] && sudo sed -ie 's/init=\/usr\/lib\/raspi-config\/bootstrap.sh//g' $BOOTDIR/cmdline.txt
 
 # Start of sequence of execution of the child-scripts...
-cd /home/pi/raspi-mame-appliance/_staging
+BASEDIR=/home/pi/raspi-mame-appliance/_staging
+cd $BASEDIR
 chmod +x *.sh
 
-# Execution of child-scripts...
-./RaspiOSSystemConfig.sh
-./RaspiOSAppsInstall.sh
-./RaspiOSDaemonsInstall.sh
-# ./MakeDataPartitionAndMoveFiles.sh
-# ./MakeRootFileSystemReadOnly.sh
+# Execution of child-scripts under context of user 'pi'...
+# Switch user context and call scripts
+su -c "$BASEDIR/RaspiOSSystemConfig.sh; \
+ $BASEDIR/RaspiOSAppsInstall.sh; \
+ $BASEDIR/RaspiOSDaemonsInstall.sh" - pi
+
+# su -c $BASEDIR/MakeDataPartitionAndMoveFiles.sh - pi
+# su -c $BASEDIR/MakeRootFileSystemReadOnly.sh - pi
 
 echo "===================================================================="
 echo "The steps are complete."
