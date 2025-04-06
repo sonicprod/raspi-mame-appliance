@@ -169,5 +169,42 @@ sudo rmdir /mnt/loop0
 
 # Add _Prepped suffix to image file
 mv $IMGFILE ${IMGFILE%.img}_Prepped.img
+IMGFILE=${IMGFILE%.img}_Prepped.img
 
 echo "=========== DONE!"
+
+lsblk -f
+echo ---------------------------------------------------------------------
+echo
+echo "     Would you like to write the image file to an SD Card?"
+echo
+echo "      You can now plug your SD Card, if not already done."
+echo ---------------------------------------------------------------------
+while true; do
+    read -p "Answer by yes or no : " yn
+    case ${yn,,} in
+        y | yes) break;;
+        n | no)  exit;;
+        *) echo "Please answer by yes or no.";;
+    esac
+done
+
+echo; echo
+lsblk -f
+echo
+read -p "Please input the DISK device (just the name, without the /dev prefix) to write to: " device
+
+while true; do
+    echo "Are you sure to write the image file to /dev/$device disk device?"
+    read -p "Please answer by yes or no : " yn
+    case ${yn,,} in
+        y | yes) break;;
+        n | no)  exit;;
+        *) echo "Please answer by yes or no.";;
+    esac
+done
+
+echo; echo
+echo "Writing $IMGFILE to SD Card (/dev/$device)..."
+# Writing image to SD Card
+sudo dd if=./$IMGFILE of=/dev/$device status=progress bs=1M
