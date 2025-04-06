@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-04
+# Updated: 2025-04-06
 # Author: Benoit Bégin
 # 
 # This script:
@@ -14,6 +14,7 @@
 
 IMGFILE=$(find . -maxdepth 1 -type f -name '20*.img.xz' -print)
 IMGFILE=${IMGFILE#"./"}	# Remove the ./ prefix
+REEPOBASEURL=https://github.com/sonicprod/raspi-mame-appliance
 
 if [ -n $IMGFILE ] && [ -f "$IMGFILE" ]; then
   echo "$IMGFILE already exist (already processed), aborting..."
@@ -82,15 +83,16 @@ echo "=========== Mounting the root filesystem..."
 sudo mount /dev/loop0 /mnt/loop0
 
 # We fetch bootstrap.sh from the Github repo...
-wget https://github.com/sonicprod/raspi-mame-appliance/blob/9c7a686c745dbe86b9aca20291e15349cdd07ca4/PRE-PROCESS/bootstrap.sh
+[ ! -f bootstrap.sh ] && wget $REPOBASEURL/blob/9c7a686c745dbe86b9aca20291e15349cdd07ca4/PRE-PROCESS/bootstrap.sh
 
 if [ ! -f bootstrap.sh ]; then
   echo "Error downloading bootstrap.sh from the Github repo!"
   exit
 fi
 
+echo "=========== Copy of bootstrap.sh to root filesystem..."
 # And we place it in the rootfs for the first execution
-sudo mv bootstrap.sh /mnt/loop0/usr/lib/raspi-config/
+sudo cp bootstrap.sh /mnt/loop0/usr/lib/raspi-config/
 sudo chmod +x /mnt/loop0/usr/lib/raspi-config/bootstrap.sh
 
 echo "=========== Unmounting the root filesystem..."
