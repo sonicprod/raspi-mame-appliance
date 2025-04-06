@@ -15,6 +15,7 @@
 
 IMGFILE=$(find . -maxdepth 1 -type f -name '20*.img.xz' -print)
 IMGFILE=${IMGFILE#"./"}	# Remove the ./ prefix
+FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
 REEPOBASEURL=https://github.com/sonicprod/raspi-mame-appliance
 
 if [ -n $IMGFILE ] && [ -f "$IMGFILE" ]; then
@@ -25,7 +26,6 @@ fi
 # Ask for sudo password at the beginning of the script so it can run uninterrupted
 sudo echo -n
 
-FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
 echo "=========== Downloading the latest RaspiOS Lite arm64..."
 # Get the latest RaspiOS Lite for arm64
 wget --trust-server-names $FETCHURL
@@ -182,7 +182,7 @@ echo
 echo "      You can now plug your SD Card, if not already done."
 echo ---------------------------------------------------------------------
 while true; do
-    read -p "Answer by yes or no : " yn
+    read -p "Please answer by yes or no : " yn
     case ${yn,,} in
         y | yes) break;;
         n | no)  exit;;
