@@ -193,10 +193,10 @@ done
 echo; echo
 lsblk -f
 echo
-read -p "Please input the DISK device (just the name, without the /dev prefix) to write to: " device
+read -p "Please input the DISK device (just the name, without the /dev prefix) to write to: " DEVICE
 
 while true; do
-    echo "Are you sure to write the image file to /dev/$device disk device?"
+    echo "Are you sure to write the image file to /dev/$DEVICE disk device?"
     read -p "Please answer by yes or no : " yn
     case ${yn,,} in
         y | yes) break;;
@@ -206,6 +206,6 @@ while true; do
 done
 
 echo; echo
-echo "Writing $IMGFILE to SD Card (/dev/$device)..."
+echo "Writing $IMGFILE to SD Card (/dev/$DEVICE)..."
 # Writing image to SD Card
-sudo dd if=./$IMGFILE of=/dev/$device status=progress bs=1M
+sudo dd if=./$IMGFILE of=/dev/$DEVICE status=progress bs=1M
