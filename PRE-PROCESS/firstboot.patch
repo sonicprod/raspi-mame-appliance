@@ -5,7 +5,7 @@
    sed -i "s/ quiet//g" "$FWLOC/cmdline.txt"
  fi
 +
-+sudo sed -ie 's|^console=serial0,115200.*$|& init=/usr/lib/raspi-config/bootstrap.sh/g' "$FWLOC/cmdline.txt"
++sudo sed -ie 's|^console=serial0,115200.*$|& init=/usr/lib/raspi-config/bootstrap.sh|g' "$FWLOC/cmdline.txt"
  mount "$FWLOC" -o remount,ro
  sync
 
