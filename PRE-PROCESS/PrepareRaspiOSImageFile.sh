@@ -91,6 +91,11 @@ if [ ! -f bootstrap.sh ]; then
   exit
 fi
 
+echo "=========== Ajusting firstboot script..."
+[ ! -f firstboot.patch ] && wget $REPOBASEURL/blob/afaea748709ed550f7a4e9c35af6ac097914720c/PRE-PROCESS/firstboot.patch
+sudo patch /mnt/loop0/usr/lib/raspberrypi-sys-mods/firstboot < firstboot.patch
+rm firstboot.patch
+
 echo "=========== Copy of bootstrap.sh to root filesystem..."
 # And we place it in the rootfs for the first execution
 sudo cp bootstrap.sh /mnt/loop0/usr/lib/raspi-config/
