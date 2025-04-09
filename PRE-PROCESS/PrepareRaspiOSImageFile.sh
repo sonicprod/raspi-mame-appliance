@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-06
+# Updated: 2025-04-09
 # Author: Benoit Bégin
 # 
 # This script:
@@ -157,12 +157,6 @@ echo "=========== Enabling SSH with ssh dummy file..."
 echo "=========== Auto-creating pi user with default password (raspberry)..."
 # The creation of the pi user will be done on first boot
 [ ! -f /mnt/loop0/userconf.txt ] && echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee /mnt/loop0/userconf.txt > /dev/null
-
-# Seeding the bootstrap.sh initial script...
-# 1. We remove this part at the end "init=/usr/lib/raspberrypi-sys-mods/firstboot"
-sudo sed -ie 's/init=\/usr\/lib\/raspberrypi-sys-mods\/firstboot*//g' /mnt/loop0/cmdline.txt
-# 2. We add to cmdline.txt: init=/usr/lib/raspi-config/bootstrap.sh
-sudo sed -ie 's/^console=serial0,115200.*$/& init=\/usr\/lib\/raspi-config\/bootstrap.sh/g' /mnt/loop0/cmdline.txt
 
 echo "=========== Unmounting boot partition..."
 sudo umount /mnt/loop0
