@@ -193,6 +193,7 @@ echo; echo
 lsblk -f
 echo
 read -p "Please input the DISK device (just the name, without the /dev prefix) to write to: " DEVICE
+echo
 
 while true; do
     echo "Are you sure to write the image file to /dev/$DEVICE disk device?"
