@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-09
+# Updated: 2025-04-11
 # Author: Benoit Bégin
 # 
 # This script:
@@ -203,6 +203,13 @@ while true; do
         n | no)  exit;;
         *) echo "Please answer by yes or no.";;
     esac
+done
+
+# Unmount all mounted partitions of $DEVICE
+for PART in $(cat /proc/mounts | grep /dev/$DEVICE | awk '{print $1}' | paste -sd "," -);
+do
+  echo Unmounting $PART...
+  sudo umount $PART
 done
 
 echo; echo
