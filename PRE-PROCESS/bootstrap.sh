@@ -46,8 +46,11 @@ chmod +x *.sh
 
 # Execution of child-scripts under context of user 'pi'...
 # Switch user context and call scripts
+echo "================== RaspiOSSystemConfig.sh =================="
 $BASEDIR/RaspiOSSystemConfig.sh
+echo "================== RaspiOSAppsInstall.sh =================="
 $BASEDIR/RaspiOSAppsInstall.sh
+echo "================== RaspiOSDaemonsInstall.sh =================="
 $BASEDIR/RaspiOSDaemonsInstall.sh
 
 # $BASEDIR/MakeDataPartitionAndMoveFiles.sh
