@@ -95,10 +95,10 @@ echo "=========== Installing bootstrap.service unit file for Systemd..."
 [ ! -f bootstrap.service ] && wget https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/7bdc5acf5c294d4d5300763f3b66f70b6534b833/PRE-PROCESS/bootstrap.service
 
 sudo chmod 644 ./bootstrap.service
-mv bootstrap.service /mnt/loop0/etc/systemd/system/
+sudo mv bootstrap.service /mnt/loop0/etc/systemd/system/
 
 # Enable unit by symlinking
-ln -sf /etc/systemd/system/bootstrap.service /mnt/loop0/etc/systemd/system/multi-user.target.wants/bootstrap.service
+sudo ln -sf /etc/systemd/system/bootstrap.service /mnt/loop0/etc/systemd/system/multi-user.target.wants/bootstrap.service
 
 echo "=========== Copy of bootstrap.sh to root filesystem..."
 # And we place it in the rootfs for the first execution
