@@ -9,7 +9,6 @@
 # This script:
 #   - Git clone the Github repo
 #   - Read the config file and make variables global
-#   - Remove itself from the kernel command-line (cmdline.txt)
 #   - Call the sequence of scripts for the customizations and the building of apps and services
 #   - Displaying a message to image the SD card to a .img file
 #   - Shutdown the system
@@ -34,10 +33,6 @@ else
   echo "Config file ($CFGFILENAME) was not found! Fatal error, end of script."
   exit
 fi
-
-BOOTDIR=$(findmnt /dev/mmcblk0p1 -n -o TARGET)
-# We remove ourself from the kernel cmdline (init=/usr/lib/raspi-config/bootstrap.sh)
-[ $BOOTDIR ] && sudo sed -ie 's/init=\/usr\/lib\/raspi-config\/bootstrap.sh//g' $BOOTDIR/cmdline.txt
 
 # Start of sequence of execution of the child-scripts...
 BASEDIR=/home/pi/raspi-mame-appliance/_staging
