@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-11
+# Updated: 2025-04-15
 # Author: Benoit Bégin
 # 
 # This script:
@@ -10,7 +10,7 @@
 #   - Format the 3rd partition with f2fs filesystem
 #   - Enable SSH Server on first boot
 #   - Auto-creating pi user with default password (raspberry)
-#   - Seed a branching script (bootstrap.sh) so the process can start automatically at first boot
+#   - Install bootstrap.service Systemd unit file and script (bootstrap.sh) so the process can start automatically at first boot
 #   - Optionnaly write the prepped disk image to a physical SD Card
 
 IMGFILE=$(find . -maxdepth 1 -type f -name '20*.img.xz' -print)
@@ -91,10 +91,14 @@ if [ ! -f bootstrap.sh ]; then
   exit
 fi
 
-echo "=========== Ajusting firstboot script..."
-[ ! -f firstboot.patch ] && wget $REPOBASEURL/blob/afaea748709ed550f7a4e9c35af6ac097914720c/PRE-PROCESS/firstboot.patch
-sudo patch /mnt/loop0/usr/lib/raspberrypi-sys-mods/firstboot < firstboot.patch
-rm firstboot.patch
+echo "=========== Installing bootstrap.service unit file for Systemd..."
+[ ! -f bootstrap.service ] && wget $REPOBASEURL/blob/a4b80c6198a4d3b345e6ad17721da25b79861ecb/PRE-PROCESS/bootstrap.service
+
+sudo chmod 644 ./bootstrap.service
+mv bootstrap.service /mnt/loop0/etc/systemd/system/
+
+# Enable unit by symlinking
+ln -sf /etc/systemd/system/bootstrap.service /mnt/loop0/etc/systemd/system/multi-user.target.wants/bootstrap.service
 
 echo "=========== Copy of bootstrap.sh to root filesystem..."
 # And we place it in the rootfs for the first execution
