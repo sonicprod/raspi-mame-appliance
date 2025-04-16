@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 # Updated: 2025-04-16
 # Author: Benoit Bégin
