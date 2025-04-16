@@ -213,7 +213,7 @@ while true; do
 done
 
 # Unmount all mounted partitions of $DEVICE
-for PART in $(cat /proc/mounts | grep /dev/$DEVICE | awk '{print $1}' | paste -sd "," -);
+for PART in $(cat /proc/mounts | grep /dev/$DEVICE | awk '{print $1}' | tr '\n' ' ');
 do
   echo Unmounting $PART...
   sudo umount $PART
