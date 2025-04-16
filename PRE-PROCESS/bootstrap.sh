@@ -17,8 +17,8 @@
 GITHUB_SRCBASE=https://github.com/sonicprod/raspi-mame-appliance
 CFGFILENAME=/home/pi/raspi-mame-appliance/_staging/Config.ExportPublicImage.cfg
 
-# Initial update...
-sudo apt-get update && sudo apt-get upgrade -y
+# Initial source repo update...
+sudo apt-get update
 
 # Git clone the repo to get the latest versions of the needed files and scripts...
 cd /home/pi
