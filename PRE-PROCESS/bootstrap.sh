@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-06
+# Updated: 2025-04-16
 # Author: Benoit Bégin
 # 
 # This is the "bootstrap" script that chain the "offline" preparation of the image and
@@ -17,8 +17,12 @@
 GITHUB_SRCBASE=https://github.com/sonicprod/raspi-mame-appliance
 CFGFILENAME=/home/pi/raspi-mame-appliance/_staging/Config.ExportPublicImage.cfg
 
+# Initial update...
+sudo apt-get update && sudo apt-get upgrade -y
+
 # Git clone the repo to get the latest versions of the needed files and scripts...
 cd /home/pi
+[ $(command -v git) ] || sudo apt-get install git -y
 git clone $GITHUB_SRCBASE
 
 # Load config file settings for automated/unattended image creation...
@@ -42,12 +46,12 @@ chmod +x *.sh
 
 # Execution of child-scripts under context of user 'pi'...
 # Switch user context and call scripts
-su -c "$BASEDIR/RaspiOSSystemConfig.sh; \
- $BASEDIR/RaspiOSAppsInstall.sh; \
- $BASEDIR/RaspiOSDaemonsInstall.sh" - pi
+$BASEDIR/RaspiOSSystemConfig.sh
+$BASEDIR/RaspiOSAppsInstall.sh
+$BASEDIR/RaspiOSDaemonsInstall.sh
 
-# su -c $BASEDIR/MakeDataPartitionAndMoveFiles.sh - pi
-# su -c $BASEDIR/MakeRootFileSystemReadOnly.sh - pi
+# $BASEDIR/MakeDataPartitionAndMoveFiles.sh
+# $BASEDIR/MakeRootFileSystemReadOnly.sh
 
 echo "===================================================================="
 echo "The steps are complete."
