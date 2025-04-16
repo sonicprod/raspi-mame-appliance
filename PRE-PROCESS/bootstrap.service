@@ -1,0 +1,14 @@
+[Unit]
+Description=Run the bootstrap.sh script at first boot
+Requires=network.target network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=pi
+Group=pi
+PAMName=login
+ExecStart=/etc/systemd/system/bootstrap.sh
+
+[Install]
+WantedBy=multi-user.target
