@@ -80,6 +80,7 @@ sudo sed -i "s/^#\{0,1\}NTP=.*$/NTP=$NTP/g" /etc/systemd/timesyncd.conf
 
 # Hostname setup
 sudo hostnamectl set-hostname $HOSTNAME
+sudo sed -i '/^127\.0\.1\.1\s/s/raspberrypi$/ '"$HOSTNAME"'/' /etc/hosts
 
 if [ $DisableWiFi == "True" ]; then
   sudo tee -a /boot/config.txt << 'EOF'
