@@ -4,7 +4,7 @@ Requires=network.target network-online.target
 After=network-online.target
 
 [Service]
-Type=oneshot
+Type=simple
 User=pi
 Group=pi
 PAMName=login
