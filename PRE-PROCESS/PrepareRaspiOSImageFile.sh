@@ -41,10 +41,11 @@ if [ ! -f "$IMGFILE" ]; then
   exit
 fi
 
-echo "=========== Extracting the compressed image file..."
+echo -n "=========== Extracting the compressed image file..."
 # Decompress the archive
 [ -f ${IMGFILE%.*} ] && rm ${IMGFILE%.*}
 unxz $IMGFILE
+echo
 
 # Remove the .xz extension
 IMGFILE=${IMGFILE%.*}
@@ -178,11 +179,11 @@ sudo rmdir /mnt/loop0
 mv $IMGFILE ${IMGFILE%.img}_Prepped.img
 IMGFILE=${IMGFILE%.img}_Prepped.img
 
-echo "=========== DONE!"
+echo "=========== DONE!"; echo
 
 lsblk -f
-echo ---------------------------------------------------------------------
 echo
+echo ---------------------------------------------------------------------
 echo "     Would you like to write the image file to an SD Card?"
 echo
 echo "      You can now plug your SD Card, if not already done."
@@ -196,18 +197,25 @@ while true; do
     esac
 done
 
-echo; echo
-lsblk -f
-echo
-read -p "Please input the DISK device (just the name, without the /dev prefix) to write to: " DEVICE
-echo
-
 while true; do
+    echo; echo
+    lsblk -f
+    echo
+    read -p "Please input the DISK device (just the name, without the /dev prefix) to write to: " DEVICE
+    echo
+    if [ -z $DEVICE ]; then
+      echo "Aborting..."
+      exit
+    fi
+
+    [ $(findmnt / -no source | grep /dev/$DEVICE) ] && echo "!!! WARNING !!! - The root / filesystem is mounted on this DISK (/dev/$DEVICE)!"
+
+    echo
     echo "Are you sure to write the image file to /dev/$DEVICE disk device?"
     read -p "Please answer by yes or no : " yn
     case ${yn,,} in
         y | yes) break;;
-        n | no)  exit;;
+        n | no)  ;;
         *) echo "Please answer by yes or no.";;
     esac
 done
