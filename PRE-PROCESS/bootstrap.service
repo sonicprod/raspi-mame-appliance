@@ -8,7 +8,7 @@ Type=oneshot
 User=pi
 Group=pi
 PAMName=login
-ExecStart=/etc/systemd/system/bootstrap.sh
+ExecStart=/usr/lib/raspi-config/bootstrap.sh
 
 [Install]
 WantedBy=multi-user.target
