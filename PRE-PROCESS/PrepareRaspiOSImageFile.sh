@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-15
+# Updated: 2025-04-16
 # Author: Benoit Bégin
 # 
 # This script:
@@ -25,6 +25,9 @@ fi
 
 # Ask for sudo password at the beginning of the script so it can run uninterrupted
 sudo echo -n
+
+# Remove pre-existing prepped image, if exist
+rm -f *_Prepped.img
 
 echo "=========== Downloading the latest RaspiOS Lite arm64..."
 # Get the latest RaspiOS Lite for arm64
