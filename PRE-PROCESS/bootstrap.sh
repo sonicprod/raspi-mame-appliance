@@ -16,6 +16,8 @@
 GITHUB_SRCBASE=https://github.com/sonicprod/raspi-mame-appliance
 CFGFILENAME=/home/pi/raspi-mame-appliance/_staging/Config.ExportPublicImage.cfg
 
+# Let the network be completely ready
+sleep 5
 # Initial source repo update...
 sudo apt-get update
 
