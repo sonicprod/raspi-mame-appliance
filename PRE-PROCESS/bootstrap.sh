@@ -19,10 +19,24 @@ CFGFILENAME=/home/pi/raspi-mame-appliance/_staging/Config.ExportPublicImage.cfg
 
 # Let the network be completely ready
 sleep 5
+
 # Initial source repo update...
 sudo apt-get update
 
-###################### THE CLOCK HAS TO BE SYNC'ED #######################################################################
+# The clock HAS to be syncronized before we apt-get install
+# Let's use a generic NTP server and force an initial sync
+sudo sed -i "s/^#\{0,1\}NTP=.*$/NTP=pool.ntp.org/g" /etc/systemd/timesyncd.conf
+
+sudo systemctl restart systemd-timesyncd
+sudo timedatectl set-ntp off
+sudo timedatectl set-ntp on
+
+# Let the timesync to occur...
+sleep 15
+
+# For logging and debug purpose
+timedatectl status
+
 # Git clone the repo to get the latest versions of the needed files and scripts...
 cd /home/pi
 [ $(command -v git) ] || sudo apt-get install git -y
