@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-16
+# Updated: 2025-04-17
 # Author: Benoit Bégin
 # 
 # This is the "bootstrap" script that chain the "offline" preparation of the image and
@@ -10,6 +10,7 @@
 #   - Git clone the Github repo
 #   - Read the config file and make variables global
 #   - Call the sequence of scripts for the customizations and the building of apps and services
+#   - Disable the Systemd unit we we're launched from
 #   - Displaying a message to image the SD card to a .img file
 #   - Shutdown the system
 
@@ -21,6 +22,7 @@ sleep 5
 # Initial source repo update...
 sudo apt-get update
 
+###################### THE CLOCK HAS TO BE SYNC'ED #######################################################################
 # Git clone the repo to get the latest versions of the needed files and scripts...
 cd /home/pi
 [ $(command -v git) ] || sudo apt-get install git -y
@@ -52,6 +54,9 @@ $BASEDIR/RaspiOSDaemonsInstall.sh
 
 # $BASEDIR/MakeDataPartitionAndMoveFiles.sh
 # $BASEDIR/MakeRootFileSystemReadOnly.sh
+
+# We disable the Systemd unit we we're launched from
+sudo systemctl disable bootstrap.service
 
 echo "===================================================================="
 echo "The steps are complete."
