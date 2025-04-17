@@ -96,7 +96,7 @@ if [ ! -f bootstrap.sh ]; then
 fi
 
 echo "=========== Installing bootstrap.service unit file for Systemd..."
-[ ! -f bootstrap.service ] && wget https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/7bdc5acf5c294d4d5300763f3b66f70b6534b833/PRE-PROCESS/bootstrap.service
+[ ! -f bootstrap.service ] && wget https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/PRE-PROCESS/bootstrap.service
 
 sudo chmod 644 ./bootstrap.service
 sudo mv bootstrap.service /mnt/loop0/etc/systemd/system/
