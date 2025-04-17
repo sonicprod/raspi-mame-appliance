@@ -9,11 +9,27 @@
 #   - Update the system's packages
 #   - Add new aliases to /home/pi/.bash_aliases
 
+# sudo dpkg-reconfigure keyboard-configuration
+# sudo dpkg-reconfigure locales
+
+# Timezone setup
+sudo timedatectl set-timezone $TIMEZONE
+
+# NTP server setup
+sudo timedatectl set-ntp true
+sudo sed -i "s/^#\{0,1\}NTP=.*$/NTP=$NTP/g" /etc/systemd/timesyncd.conf
+sudo systemctl restart systemd-timesyncd.service
+
 # Initial packages update...
 sudo apt-get update && sudo apt-get upgrade -y
 # Cleanup
 sudo apt-get clean -y
 sudo apt-get autoclean -y
+
+# Hostname setup
+sudo hostnamectl set-hostname $HOSTNAME
+sudo sed -i '/^127\.0\.1\.1\s/s/raspberrypi$/ '"$HOSTNAME"'/' /etc/hosts
+sudo service NetworkManager restart
 
 # Add some new aliases for the system...
 tee -a /home/pi/.bash_aliases << 'EOF'
@@ -67,21 +83,6 @@ S E R V I C E      M O D E
 
 IP Address: \4
 EOF
-
-# Timezone setup
-sudo timedatectl set-timezone $TIMEZONE
-
-# sudo dpkg-reconfigure keyboard-configuration
-# sudo dpkg-reconfigure locales
-
-# NTP server setup
-sudo timedatectl set-ntp true
-sudo sed -i "s/^#\{0,1\}NTP=.*$/NTP=$NTP/g" /etc/systemd/timesyncd.conf
-
-# Hostname setup
-sudo hostnamectl set-hostname $HOSTNAME
-sudo sed -i '/^127\.0\.1\.1\s/s/raspberrypi$/ '"$HOSTNAME"'/' /etc/hosts
-sudo service NetworkManager restart
 
 if [ $DisableWiFi == "True" ]; then
   sudo tee -a /boot/config.txt << 'EOF'
