@@ -73,8 +73,13 @@ $BASEDIR/RaspiOSDaemonsInstall.sh
 sudo systemctl disable bootstrap.service
 
 echo "===================================================================="
-echo "The steps are complete."
+echo "                     The steps are complete."
+echo "===================================================================="
 echo "Please double-check for any errors."
+echo
+echo "To see the log, issue:"
+echo
+echo "    journalctl | grep bootstrap"
 echo
 echo "If error-free, this system is now ready to be imaged to a .img file."
 echo
