@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-17
+# Updated: 2025-04-18
 # Author: Benoit Bégin
 # 
 # This is the "bootstrap" script that chain the "offline" preparation of the image and
