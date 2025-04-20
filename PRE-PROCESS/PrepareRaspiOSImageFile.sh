@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-16
+# Updated: 2025-04-20
 # Author: Benoit Bégin
 # 
 # This script:
@@ -108,6 +108,10 @@ echo "=========== Copy of bootstrap.sh to root filesystem..."
 # And we place it in the rootfs for the first execution
 sudo cp bootstrap.sh /mnt/loop0/usr/lib/raspi-config/
 sudo chmod +x /mnt/loop0/usr/lib/raspi-config/bootstrap.sh
+
+echo "=========== Enabling persistent journald logging..."
+# For debugging and review purpose
+sudo sed -i "s/^#\{0,1\}Storage=.*$/Storage=persistent/g" /mnt/loop0/etc/systemd/journald.conf
 
 echo "=========== Unmounting the root filesystem..."
 # Unmount the root filesystem
