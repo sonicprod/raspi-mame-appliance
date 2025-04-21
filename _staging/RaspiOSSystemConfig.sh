@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-03
+# Updated: 2025-04-21
 # Author: Benoit Bégin
 # 
 # This script configure base system-wide OS settings
@@ -111,6 +111,9 @@ sudo apt-get remove avahi-daemon -y
 
 # Désactivation du client NFS
 sudo apt-get remove nfs-common -y
+
+# Redémarrage du réseau après les changements précédents
+sudo systemctl restart dhcpcd
 
 # Bascule du CPU Governor en mode Performance...
 sudo apt-get install cpufrequtils -y
