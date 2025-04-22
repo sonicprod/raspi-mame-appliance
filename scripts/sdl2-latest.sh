@@ -2,8 +2,9 @@
 
 # This script build the latest SDL2 version without X11 dependency.
 
-SDLVERSION=2.30.12
+SDLVERSION=2.32.4
 TTFVERSION=2.24.0
+MIXERVERSION=2.8.1
 
 if [ "$(command -v sdl2-config)" ] && [ "$(sdl2-config --version)" == "$SDLVERSION" ]; then
   echo "SDL2 is already at the latest version ($SDLVERSION)."
@@ -40,10 +41,22 @@ else
   sudo make install
   sudo ldconfig -v
 
+  # SDL2_mixer
+  wget SDL2_mixer-${MIXERVERSION}.zip
+  unzip SDL2_mixer-${MIXERVERSION}.zip
+  rm SDL2_mixer-${MIXERVERSION}.zip
+  cd SDL2_mixer-${MIXERVERSION}
+  ./configure
+  make -j $(nproc)
+  sudo make install
+  sudo ldconfig -v
+
   cd ~
   sudo rm -R SDL2-${VERSION}
   sudo rm -R SDL2_ttf-${TTFVERSION}
+  sudo rm -R SDL2_mixer-${MIXERVERSION}
   sudo apt-get remove build-essential -y
 fi
 
 sudo ldconfig
+
