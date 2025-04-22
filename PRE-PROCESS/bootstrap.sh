@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-18
+# Updated: 2025-04-22
 # Author: Benoit Bégin
 # 
 # This is the "bootstrap" script that chain the "offline" preparation of the image and
@@ -66,7 +66,8 @@ $BASEDIR/RaspiOSAppsInstall.sh
 echo "================== RaspiOSDaemonsInstall.sh =================="
 $BASEDIR/RaspiOSDaemonsInstall.sh
 
-# $BASEDIR/MakeDataPartitionAndMoveFiles.sh
+echo "================== MakeDataPartitionAndMoveFiles.sh =================="
+$BASEDIR/MakeDataPartitionAndMoveFiles.sh
 # $BASEDIR/MakeRootFileSystemReadOnly.sh
 
 # We disable the Systemd unit we we're launched from
