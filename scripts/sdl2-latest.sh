@@ -52,7 +52,7 @@ else
   sudo ldconfig -v
 
   cd ~
-  sudo rm -R SDL2-${VERSION}
+  sudo rm -R SDL2-${SDLVERSION}
   sudo rm -R SDL2_ttf-${TTFVERSION}
   sudo rm -R SDL2_mixer-${MIXERVERSION}
   sudo apt-get remove build-essential -y
