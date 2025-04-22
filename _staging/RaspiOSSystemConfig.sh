@@ -112,8 +112,7 @@ sudo apt-get remove avahi-daemon -y
 # Désactivation du client NFS
 sudo apt-get remove nfs-common -y
 
-# Redémarrage du réseau après les changements précédents
-# sudo systemctl restart dhcpcd
+# Redémarrage du réseau, suite aux changements précédents
 sudo systemctl restart NetworkManager
 
 # Bascule du CPU Governor en mode Performance...
