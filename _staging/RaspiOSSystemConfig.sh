@@ -121,3 +121,7 @@ grep -q GOVERNOR= /etc/init.d/cpufrequtils && sudo sed -i "s/GOVERNOR=.*$/GOVERN
 sudo systemctl daemon-reload
 sudo systemctl restart cpufrequtils.service
 
+# Un peu de ménage en terminant
+sudo apt-get autoremove -y
+
+
