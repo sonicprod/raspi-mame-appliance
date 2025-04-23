@@ -88,7 +88,7 @@ echo "=========== Mounting the root filesystem..."
 sudo mount /dev/loop0 /mnt/loop0
 
 # We fetch bootstrap.sh from the Github repo...
-[ ! -f bootstrap.sh ] && wget $REPOBASEURL/blob/d06fcb6ca5ae7161fc7cc27400b3fe2747bee54c/PRE-PROCESS/bootstrap.sh
+[ ! -f bootstrap.sh ] && wget https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/PRE-PROCESS/bootstrap.sh
 
 if [ ! -f bootstrap.sh ]; then
   echo "Error downloading bootstrap.sh from the Github repo!"
