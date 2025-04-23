@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-20
+# Updated: 2025-04-23
 # Author: Benoit Bégin
 # 
 # This script:
@@ -88,7 +88,7 @@ echo "=========== Mounting the root filesystem..."
 sudo mount /dev/loop0 /mnt/loop0
 
 # We fetch bootstrap.sh from the Github repo...
-[ ! -f bootstrap.sh ] && wget $REPOBASEURL/blob/9c7a686c745dbe86b9aca20291e15349cdd07ca4/PRE-PROCESS/bootstrap.sh
+[ ! -f bootstrap.sh ] && wget $REPOBASEURL/blob/d06fcb6ca5ae7161fc7cc27400b3fe2747bee54c/PRE-PROCESS/bootstrap.sh
 
 if [ ! -f bootstrap.sh ]; then
   echo "Error downloading bootstrap.sh from the Github repo!"
