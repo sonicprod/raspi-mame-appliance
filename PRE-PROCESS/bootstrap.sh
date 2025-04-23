@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-22
+# Updated: 2025-04-23
 # Author: Benoit Bégin
 # 
 # This is the "bootstrap" script that chain the "offline" preparation of the image and
@@ -40,6 +40,7 @@ sudo apt-get update
 # Git clone the repo to get the latest versions of the needed files and scripts...
 cd /home/pi
 [ $(command -v git) ] || sudo apt-get install git -y
+[-d raspi-mame-appliance ] && sudo rm -R raspi-mame-appliance
 git clone $GITHUB_SRCBASE
 
 # Load config file settings for automated/unattended image creation...
