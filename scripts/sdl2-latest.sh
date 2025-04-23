@@ -42,7 +42,7 @@ else
   sudo ldconfig -v
 
   # SDL2_mixer
-  wget SDL2_mixer-${MIXERVERSION}.zip
+  wget https://libsdl.org/projects/SDL_mixer/release/SDL2_mixer-${MIXERVERSION}.zip
   unzip SDL2_mixer-${MIXERVERSION}.zip
   rm SDL2_mixer-${MIXERVERSION}.zip
   cd SDL2_mixer-${MIXERVERSION}
