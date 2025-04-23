@@ -32,7 +32,7 @@ sudo sed -i '/^127\.0\.1\.1\s/s/raspberrypi$/ '"$HOSTNAME"'/' /etc/hosts
 sudo service NetworkManager restart
 
 # Add some new aliases for the system...
-tee -a /home/pi/.bash_aliases << 'EOF'
+grep -a "alias frontend=" /home/pi/.bash_aliases || tee -a /home/pi/.bash_aliases << 'EOF'
 alias update='sudo apt-get update && sudo apt-get upgrade -y'
 alias cputemp='/usr/bin/vcgencmd measure_temp'
 alias cpufreq="echo Clock Speed=$(($(/usr/bin/vcgencmd measure_clock arm | awk -F '=' '{print $2}')/1000000)) MHz"
@@ -45,15 +45,15 @@ alias mode='echo -n "The system is currently in "; systemctl -q is-active mame-a
 EOF
 
 # Supprimer l’avertissement (disclaimer) ci-dessous au login
-sudo rm /etc/motd
+sudo rm -f /etc/motd
 
 cd /home/pi/raspi-mame-appliance/scripts
-mkdir /home/pi/scripts
+mkdir -p /home/pi/scripts
 cp *.sh /home/pi/scripts
 chmod +x /home/pi/scripts/*.sh
 
 # Notices display at login
-sudo tee -a /etc/bash.bashrc << 'EOF'
+grep -a "if [ -f /home/pi/settings ]; then" /etc/bash.bashrc || sudo tee -a /etc/bash.bashrc << 'EOF'
 
 echo '----------------------------------------------------------------------'
 # Load environment settings...
@@ -78,14 +78,14 @@ echo "The system is currently in $(systemctl -q is-active mame-autostart.service
 EOF
 
 # Add some info to the default issue message
-sudo tee -a /etc/issue << 'EOF'
+grep -a "S E R V I C E      M O D E" /etc/issue || sudo tee -a /etc/issue << 'EOF'
 S E R V I C E      M O D E
 
 IP Address: \4
 EOF
 
 if [ $DisableWiFi == "True" ]; then
-  sudo tee -a /boot/config.txt << 'EOF'
+  grep -q "dtoverlay=disable-wifi" /boot/config.txt || sudo tee -a /boot/config.txt << 'EOF'
 # Turns off WiFi (for those who use Ethernet only)
 dtoverlay=disable-wifi
 EOF
@@ -94,7 +94,7 @@ EOF
 fi
 
 if [ $DisableBluetooth == "True" ]; then
-    sudo tee -a /boot/config.txt << 'EOF'
+    grep -q "dtoverlay=disable-bt" /boot/config.txt || sudo tee -a /boot/config.txt << 'EOF'
 # Turns off Bluetooth
 dtoverlay=disable-bt
 EOF
