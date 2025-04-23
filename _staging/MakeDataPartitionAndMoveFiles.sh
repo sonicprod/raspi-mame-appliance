@@ -20,7 +20,7 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     sudo apt-get install f2fs-tools -y
 
     # Formatage de la partition (déjà existante) avec le système de fichiers F2FS...
-    sudo mkfs.f2fs -l data /dev/mmcblk0p3
+    sudo mkfs.f2fs -f -l data /dev/mmcblk0p3 && echo  === Format is OK ||  === Format FAILED
   elif [ "$(getconf PAGESIZE)" == "16384" ]; then
     # Raspberry Pi 5 avec pagesize de 16 Kb...
     # We remove the stable branch f2fs-tools, if present
@@ -39,7 +39,7 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     rm g-dev-test.zip
   
     # Formatting the partition with F2FS with a 16k blocksize (-b parameter)
-    sudo mkfs.f2fs -b 16384 -l data /dev/mmcblk0p3
+    sudo mkfs.f2fs -f -b 16384 -l data /dev/mmcblk0p3 && echo  === Format is OK ||  === Format FAILED
   
     # For mount support, we need kernel 6.12 and up...
     sudo rpi-update next
