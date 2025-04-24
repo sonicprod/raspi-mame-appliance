@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-03-30
+# Updated: 2025-04-24
 # Author: Benoit Bégin
 # 
 # This script:
@@ -8,7 +8,7 @@
 #  - Move some files to this newly created partition
 #  - Make some symlinks to the newly created partition
 
-# La partition /data sera en lecture/écriture et utilisera 
+# La partition /data sera en lecture/écriture et utilisera
 # le système de fichiers F2FS (Flash-Friendly File System)
 # https://en.wikipedia.org/wiki/F2FS
 
@@ -26,7 +26,7 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     # We remove the stable branch f2fs-tools, if present
     sudo apt-get remove f2fs-tools -y
     # Install the g-dev-test branch of f2fs-tools
-    wget https://github.com/jaegeuk/f2fs-tools/archive/refs/heads/g-dev-test.zip
+    wget https://github.com/jaegeuk/f2fs-tools/archive/refs/heads/g-dev-test.zip || echo === Download of f2fs-tools g-dev-test FAILED
     cd f2fs-tools-g-dev-test
     # Install build dependencies
     sudo apt-get install automake
@@ -35,8 +35,8 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     sudo make install
     sudo ldconfig
     cd ..
-    sudo rm -R f2fs-tools-g-dev-test/
-    rm g-dev-test.zip
+    sudo rm -Rf f2fs-tools-g-dev-test/
+    rm -f g-dev-test.zip
   
     # Formatting the partition with F2FS with a 16k blocksize (-b parameter)
     sudo mkfs.f2fs -f -b 16384 -l data /dev/mmcblk0p3 && echo  === Format is OK ||  === Format FAILED
@@ -47,19 +47,23 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     touch ~/need_reboot
   fi
 
+  # Reboot if it was needed
+  [ -f ~/need_reboot ] && rm ~/need_reboot && sudo reboot
+
   # Création du point de montage /data
   [ ! -d /data ] && sudo mkdir /data
 
   # Tester pour s'assurer qu'il n'y a pas eu d'erreur en montant et remontant la partition...
-  sudo mount -t f2fs -o rw /dev/mmcblk0p3 /data && echo === Mount is OK   || echo ============= MOUNT FAILED =============
-  sudo mount -o remount,rw /data &&                echo === Remount is OK || echo ============= REMOUNT FAILED =============
-
-  # Ajout du montage automatique dans /etc/fstab (si pas déjà présent)...
-  grep -q "/dev/mmcblk0p3        /data           f2fs" /etc/fstab || \ 
+  if ( sudo mount -t f2fs -o rw /dev/mmcblk0p3 /data ); then
+    echo === Mount is OK
+    # Ajout du montage automatique dans /etc/fstab (si pas déjà présent)...
+    grep -q "/dev/mmcblk0p3        /data           f2fs" /etc/fstab || \
    sudo sed -ie '\/\s ext4.*/a\/dev/mmcblk0p3        /data           f2fs    defaults,noatime    0    2' /etc/fstab
-  
-  # Reboot if it was needed
-  [ -f ~/need_reboot ] && rm ~/need_reboot && sudo reboot
+  else
+    echo ============= MOUNT FAILED =============
+    echo ============= FATAL error, exiting...
+    exit
+  fi
 fi
 
 if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2fs" ]; then
@@ -141,4 +145,3 @@ sudo chmod -R 744 /data/.sys/alsa/*
 
 sudo rmdir /var/lib/alsa
 sudo ln -s /data/.sys/alsa /var/lib/alsa
-
