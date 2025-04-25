@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Updated: 2025-04-24
+# Author: Benoit Bégin
+#
 # This script update MAME to the latest version or a specific version.
 
 MAKEOPTS='TARGETOS=linux NO_X11=1 NOWERROR=1 NO_USE_XINPUT=1 NO_USE_XINPUT_WII_LIGHTGUN_HACK=1 NO_OPENGL=1 USE_QTDEBUG=0 DEBUG=0 REGENIE=1 NO_BGFX=1 FORCE_DRC_C_BACKEND=1 NO_USE_PORTAUDIO=1 SYMBOLS=0'
@@ -70,8 +73,11 @@ else
     if [ "${1,,}" == "latest" ]; then
       MAMEVER=$(mame-latest)
       MAMEVER=${MAMEVER//./}    # Remove the dot
-    else
+    elif [[ $1 == +([0-9]) ]]; then
       MAMEVER=$1
+    else
+      echo 'VER must be numeric'
+      exit
     fi
     MAMESRCPATH=/home/pi/mame${MAMEVER}
     SCRIPTPATH=${0%/*}
@@ -136,7 +142,7 @@ else
             mv /home/pi/scripts/mame $MAMESRCPATH
           fi
         fi
-        
+
         [ ! -x $MAMESRCPATH/mame ] && make -j $MAXTHREAD $MAKEOPTS PLATFORM=arm64 PTR64=1
 
         echo Build time took: $(secs_to_human "$(($(date +%s) - ${BUILDSTART}))").
@@ -234,3 +240,4 @@ else
     fi
     fs_lock
 fi
+
