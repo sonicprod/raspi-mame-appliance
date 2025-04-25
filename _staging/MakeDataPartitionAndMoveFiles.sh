@@ -43,13 +43,9 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     sudo mkfs.f2fs -f -b 16384 -l data /dev/mmcblk0p3 && echo "=== Format is OK" || echo "=== Format FAILED"
 
     # For mount support, we need kernel 6.12 and up...
-    echo y | sudo rpi-update next
     # A reboot will be needed to use the new kernel...
-    touch ~/need_reboot
+    echo y | sudo RPI_REBOOT=1 rpi-update next
   fi
-
-  # Reboot if it was needed
-  [ -f ~/need_reboot ] && rm ~/need_reboot && sudo reboot
 
   # Création du point de montage /data
   [ ! -d /data ] && sudo mkdir /data
