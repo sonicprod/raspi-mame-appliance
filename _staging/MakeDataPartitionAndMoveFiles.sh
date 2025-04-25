@@ -118,15 +118,20 @@ ln -s /data/attract ~/.attract
 ln -s /data/advance ~/.advance
 ln -s /data/hypseus ~/.hypseus
 
-# Ajustement pour l'emplacement des High Scores (MAME 0.237 et plus)
+# Folder to save High Scores (MAME 0.237 and up)
 [ -f /data/mame/lua/hiscore/plugin.cfg ] && mv /data/mame/lua/hiscore/plugin.cfg /data/mame/hi
 rmdir /data/mame/lua/hiscore
 ln -s /data/mame/hi /data/mame/lua/hiscore
 
 # Ajustement pour permettre de sauvegarder les réglages audio (volume)
-
 sudo mkdir -p /data/.sys/alsa
 sudo chown -R root:pi /data/.sys
+
+# Folder to save system environnement variables
+mkdir -p /data/.sys/env
+# File ~/settings already exist, we move it to persistent /data and link it...
+mv /home/pi/settings /data/.sys/env
+ln -s /data/.sys/env/settings /home/pi/settings
 
 # We grant rw to owner pi and pi group
 sudo chown -R pi:pi /data/.sys/env
