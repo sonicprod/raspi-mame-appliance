@@ -22,11 +22,12 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     # Formatage de la partition (déjà existante) avec le système de fichiers F2FS...
     sudo mkfs.f2fs -f -l data /dev/mmcblk0p3 && echo  === Format is OK ||  === Format FAILED
   elif [ "$(getconf PAGESIZE)" == "16384" ]; then
+    echo "======== Raspberry Pi 5 with 16k pages..."
     # Raspberry Pi 5 avec pagesize de 16 Kb...
     # We remove the stable branch f2fs-tools, if present
     sudo apt-get remove f2fs-tools -y
     # Install the g-dev-test branch of f2fs-tools
-    wget https://github.com/jaegeuk/f2fs-tools/archive/refs/heads/g-dev-test.zip || echo === Download of f2fs-tools g-dev-test FAILED
+    wget https://github.com/jaegeuk/f2fs-tools/archive/refs/heads/g-dev-test.zip || echo "=== Download of f2fs-tools g-dev-test FAILED"
     unzip g-dev-test.zip
     cd f2fs-tools-g-dev-test
     # Install build dependencies
@@ -39,7 +40,7 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     rm -f g-dev-test.zip
   
     # Formatting the partition with F2FS with a 16k blocksize (-b parameter)
-    sudo mkfs.f2fs -f -b 16384 -l data /dev/mmcblk0p3 && echo  === Format is OK ||  === Format FAILED
+    sudo mkfs.f2fs -f -b 16384 -l data /dev/mmcblk0p3 && echo "=== Format is OK" || echo "=== Format FAILED"
 
     # For mount support, we need kernel 6.12 and up...
     echo y | sudo rpi-update next
@@ -60,8 +61,8 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     grep -q "/dev/mmcblk0p3        /data           f2fs" /etc/fstab || \
    sudo sed -ie '\/\s ext4.*/a\/dev/mmcblk0p3        /data           f2fs    defaults,noatime    0    2' /etc/fstab
   else
-    echo ============= MOUNT FAILED =============
-    echo ============= FATAL error, exiting...
+    echo "============= MOUNT FAILED ============="
+    echo "============= FATAL error, exiting..."
     exit
   fi
 fi
