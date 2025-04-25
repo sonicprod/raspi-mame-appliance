@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-22
+# Updated: 2025-04-24
 # Author: Benoit Bégin
 # 
 # This script configure base system-wide OS settings
@@ -53,7 +53,7 @@ cp *.sh /home/pi/scripts
 chmod +x /home/pi/scripts/*.sh
 
 # Notices display at login
-grep -a "if [ -f /home/pi/settings ]; then" /etc/bash.bashrc || sudo tee -a /etc/bash.bashrc << 'EOF'
+grep -a "The system is currently in" /etc/bash.bashrc || sudo tee -a /etc/bash.bashrc << 'EOF'
 
 echo '----------------------------------------------------------------------'
 # Load environment settings...
