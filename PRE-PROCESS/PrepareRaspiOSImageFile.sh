@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Updated: 2025-04-23
+# Updated: 2025-04-24
 # Author: Benoit Bégin
 # 
 # This script:
 #   - Download the latest official image file of Raspberry Pi OS Lite (arm64)
 #   - Expand the 2nd partition and the ext4 root filesystem with an additional 16 GB of space
-#   - Add a 3rd partition (type 83, Linux) with a size of 100 MB
+#   - Add a 3rd partition (type 83, Linux) with a size of 200 MB
 #   - Format the 3rd partition with f2fs filesystem
 #   - Enable SSH Server on first boot
 #   - Auto-creating pi user with default password (raspberry)
@@ -129,9 +129,9 @@ while read DEV COL VAR1 START VAR2 SIZE TAIL; do
   [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR1" = "start=" ] && export OFFSETP3=$((${START//,/}+${SIZE//,/}))
 done <<< $PARTTAB
 
-# Grow the image file: add 100 MB to make space for f2fs data rw partition
-echo "=========== Adding +100M to image file $IMGFILE..."
-truncate --size=+100M $IMGFILE
+# Grow the image file: add 200 MB to make space for f2fs data rw partition
+echo "=========== Adding +200M to image file $IMGFILE..."
+truncate --size=+200M $IMGFILE
 
 # Create new partition with all available space, type Linux (83)
 echo "=========== Creating/adding a new partition of type 83 (Linux) for f2fs data rw partition..."
@@ -235,3 +235,4 @@ echo; echo
 echo "Writing $IMGFILE to SD Card (/dev/$DEVICE)..."
 # Writing image to SD Card
 sudo dd if=./$IMGFILE of=/dev/$DEVICE status=progress bs=1M
+echo; echo DONE
