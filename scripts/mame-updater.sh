@@ -58,7 +58,7 @@ if (systemctl -q is-active mame-autostart.service) then
 fi
 
 if [ ! $1 ]; then
-    echo Usage: $0 VER | Latest
+    echo 'Usage: $0 VER | Latest'
     echo '  Where VER is the 4-digit version number of MAME to update (for example: 0224).'
     echo '  OR use the argument Latest to update to the latest available MAME version.'
 else
