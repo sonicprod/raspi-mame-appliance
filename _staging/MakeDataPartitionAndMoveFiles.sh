@@ -2,7 +2,7 @@
 
 # Updated: 2025-04-24
 # Author: Benoit Bégin
-# 
+#
 # This script:
 #  - Create and format the /data r/w partition with F2FS filesystem
 #  - Move some files to this newly created partition
