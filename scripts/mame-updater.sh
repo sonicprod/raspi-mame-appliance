@@ -76,6 +76,15 @@ else
     MAMESRCPATH=/home/pi/mame${MAMEVER}
     SCRIPTPATH=${0%/*}
 
+    # Check if the same MAME version is not already found, by any chance...
+    if [ -x /home/pi/mame/mame ]; then
+      FOUNDMAMEVER=$(/home/pi/mame/mame -version | cut -d' ' -f1)
+      if [ ${FOUNDMAMEVER//./} == $MAMEVER ]; then    # Version of binary found match the latest version
+        echo "This version of MAME is already built, exiting..."
+        exit
+      fi
+    fi
+
     echo Installing/uptading to MAME $MAMEVER...
     fs_unlock
 
