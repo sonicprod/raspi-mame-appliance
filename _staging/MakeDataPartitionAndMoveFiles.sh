@@ -44,7 +44,7 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
 
     # For mount support, we need kernel 6.12 and up...
     # A reboot will be needed to use the new kernel...
-    echo y | sudo RPI_REBOOT=1 rpi-update next
+    echo y | sudo RPI_REBOOT=1 rpi-update rpi-6.12.y
   fi
 
   # Création du point de montage /data
