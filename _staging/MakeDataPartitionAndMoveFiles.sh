@@ -29,8 +29,7 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     wget https://github.com/jaegeuk/f2fs-tools/archive/refs/heads/g-dev-test.zip || echo === Download of f2fs-tools g-dev-test FAILED
     cd f2fs-tools-g-dev-test
     # Install build dependencies
-    sudo apt-get install automake
-    sudo apt-get install libtool
+    sudo apt-get install automake libtool -y
     ./autogen.sh && ./configure && make
     sudo make install
     sudo ldconfig
