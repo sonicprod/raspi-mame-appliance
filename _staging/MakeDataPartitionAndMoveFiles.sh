@@ -27,6 +27,7 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     sudo apt-get remove f2fs-tools -y
     # Install the g-dev-test branch of f2fs-tools
     wget https://github.com/jaegeuk/f2fs-tools/archive/refs/heads/g-dev-test.zip || echo === Download of f2fs-tools g-dev-test FAILED
+    unzip g-dev-test.zip
     cd f2fs-tools-g-dev-test
     # Install build dependencies
     sudo apt-get install automake libtool -y
@@ -39,9 +40,9 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
   
     # Formatting the partition with F2FS with a 16k blocksize (-b parameter)
     sudo mkfs.f2fs -f -b 16384 -l data /dev/mmcblk0p3 && echo  === Format is OK ||  === Format FAILED
-  
+
     # For mount support, we need kernel 6.12 and up...
-    sudo rpi-update next
+    echo y | sudo rpi-update next
     # A reboot will be needed to use the new kernel...
     touch ~/need_reboot
   fi
