@@ -196,24 +196,8 @@ else
                   -createconfig
             fi
 
-            if [ -z $FRONTEND ]; then
-              if [ ! -f /home/pi/settings ]; then
-                echo FRONTEND=mame>/home/pi/settings
-              else
-                grep -q FRONTEND= /home/pi/settings && sed -i "s/^FRONTEND=.*$/FRONTEND="${1,,}"/g" $(readlink /home/pi/settings) || (echo AUTOROM="${2,,}" | tee -a /home/pi/settings; echo | tee -a /home/pi/settings)
-              fi
-            fi
-
-            if [ ! -L /home/pi/settings ] && [[ $(findmnt -n /data) ]]; then    # Symlink not found and /data is mounted...
-              [ ! -f /data/.sys/env/settings ] && mkdir -p /data/.sys/env
-              if [ ! -f /home/pi/settings ]; then
-                touch /data/.sys/env/settings
-                echo 'FRONTEND=mame'>/home/pi/settings
-              else      # File settings already exist
-                mv /home/pi/settings /data/.sys/env
-              fi
-              ln -s /data/.sys/env/settings /home/pi/settings
-            fi
+            # We create a basic ~/settings file, if not already exist
+            [ ! -f /home/pi/settings ] && echo 'FRONTEND=mame'>/home/pi/settings
 
             # Get the latest history.dat file
             echo Applying latest history.dat...
