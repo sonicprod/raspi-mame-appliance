@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-24
+# Updated: 2025-04-26
 # Author: Benoit Bégin
 #
 # This script:
@@ -57,7 +57,7 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     grep -q "/dev/mmcblk0p3        /data           f2fs" /etc/fstab || \
    sudo sed -ie '\/\s ext4.*/a\/dev/mmcblk0p3        /data           f2fs    defaults,noatime    0    2' /etc/fstab
   else
-    echo "============= MOUNT FAILED ============="
+    echo "============= MOUNT OF /DATA FAILED ============="
     echo "============= FATAL error, exiting..."
     exit
   fi
@@ -78,9 +78,9 @@ fi
 
 # Création des sous-dossiers, ajustement des permissions, du propriétaire (*owner*) et du groupe
 cd /data
-sudo mkdir mame hypseus attract advance
+sudo mkdir -p mame hypseus attract advance
 cd mame
-sudo mkdir artwork cabinets cfg cpanels ctrlr diff flyers hi history icons ini inp lua marquees memcard pcb nvram roms snap sta titles ui
+sudo mkdir -p artwork cabinets cfg cpanels ctrlr diff flyers hi history icons ini inp lua marquees memcard pcb nvram roms snap sta titles ui
 sudo chown -R pi:pi /data
 sudo chmod -R 3774 /data
 
@@ -110,7 +110,7 @@ ln -s ./ini/mame.ini /data/mame/mame.ini
 # ainsi qu'une gestion facilitée des ROMs et du matériel graphique associé...
 
 cd ~/mame
-rm -R roms ctrlr snap nvram history artwork
+rm -Rf roms ctrlr snap nvram history artwork
 cd ~; rmdir .mame .hypseus .advance .attract
 
 ln -s /data/mame    ~/.mame
@@ -123,15 +123,14 @@ ln -s /data/hypseus ~/.hypseus
 rmdir /data/mame/lua/hiscore
 ln -s /data/mame/hi /data/mame/lua/hiscore
 
-# Ajustement pour permettre de sauvegarder les réglages audio (volume)
+# Folder to save audio settings (volume)
 sudo mkdir -p /data/.sys/alsa
 sudo chown -R root:pi /data/.sys
 
 # Folder to save system environnement variables
 mkdir -p /data/.sys/env
 # File ~/settings already exist, we move it to persistent /data and link it...
-mv /home/pi/settings /data/.sys/env
-ln -s /data/.sys/env/settings /home/pi/settings
+mv /home/pi/settings /data/.sys/env && ln -s /data/.sys/env/settings /home/pi/settings
 
 # We grant rw to owner pi and pi group
 sudo chown -R pi:pi /data/.sys/env
@@ -147,3 +146,5 @@ sudo chmod -R 744 /data/.sys/alsa/*
 
 sudo rmdir /var/lib/alsa
 sudo ln -s /data/.sys/alsa /var/lib/alsa
+
+
