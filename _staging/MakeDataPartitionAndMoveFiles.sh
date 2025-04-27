@@ -20,7 +20,7 @@
 if ( ! sudo mount -t f2fs -o rw /dev/mmcblk0p3 /data ); then
   if [ "$(getconf PAGESIZE)" == "4096" ]; then
     # Raspberry Pi 4/4b avec pagesize de 4 Kb...
-    # Installer les binaires pour le système de fichiers F2FS :
+    # Installer les binaires pour le système de fichiers F2FS :
     sudo apt-get install f2fs-tools -y
 
     # Formatage de la partition (déjà existante) avec le système de fichiers F2FS...
@@ -42,25 +42,13 @@ if ( ! sudo mount -t f2fs -o rw /dev/mmcblk0p3 /data ); then
     cd ..
     sudo rm -Rf f2fs-tools-g-dev-test/
     rm -f g-dev-test.zip
-  
+
     # Formatting the partition with F2FS with a 16k blocksize (-b parameter)
     sudo mkfs.f2fs -f -b 16384 -l data /dev/mmcblk0p3 && echo "=== Format is OK" || echo "=== Format FAILED"
 
     # For mount support, we need kernel 6.12 and up...
     # A reboot will be needed to use the new kernel...
     echo y | sudo RPI_REBOOT=1 rpi-update rpi-6.12.y
-  fi
-
-  # Tester pour s'assurer qu'il n'y a pas eu d'erreur en montant et remontant la partition...
-  if ( sudo mount -t f2fs -o rw /dev/mmcblk0p3 /data ); then
-    echo === Mount is OK
-    # Ajout du montage automatique dans /etc/fstab (si pas déjà présent)...
-    grep -q "/dev/mmcblk0p3        /data           f2fs" /etc/fstab || \
-   sudo sed -ie '\/\s ext4.*/a\/dev/mmcblk0p3        /data           f2fs    defaults,noatime    0    2' /etc/fstab
-  else
-    echo "============= MOUNT OF /DATA FAILED ============="
-    echo "============= FATAL error, exiting..."
-    exit
   fi
 fi
 
@@ -69,7 +57,14 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
   exit
 fi
 
-# ******* À partir de ce point, /data *est* monté *******
+############### FSTAB
+echo "=== Mount is OK ==="
+# Ajout du montage automatique dans /etc/fstab (si pas déjà présent)...
+grep -q "/dev/mmcblk0p3        /data           f2fs" /etc/fstab || \
+ sudo sed -ie '\/\s ext4.*/a\/dev/mmcblk0p3        /data           f2fs    defaults,noatime    0    2' /etc/fstab
+#################
+
+# ******* À partir de ce point, /data *est* monté, mais pas nécessairement dans /etc/fstab *******
 
 # On vérifie si le script n'a pas déjà été exécuté
 if [ -f /data/mame/ini/mame.ini ]; then
@@ -80,7 +75,7 @@ fi
 # Création des sous-dossiers, ajustement des permissions, du propriétaire (*owner*) et du groupe
 cd /data
 sudo mkdir -p mame hypseus attract advance
-cd mame
+cd ~/mame
 sudo mkdir -p artwork cabinets cfg cpanels ctrlr diff flyers hi history icons ini inp lua marquees memcard pcb nvram roms snap sta titles ui
 sudo chown -R pi:pi /data
 sudo chmod -R 3774 /data
@@ -147,5 +142,4 @@ sudo chmod -R 744 /data/.sys/alsa/*
 
 sudo rmdir /var/lib/alsa
 sudo ln -s /data/.sys/alsa /var/lib/alsa
-
 
