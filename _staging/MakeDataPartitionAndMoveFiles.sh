@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-26
+# Updated: 2025-04-27
 # Author: Benoit Bégin
 #
 # This script:
@@ -12,8 +12,12 @@
 # le système de fichiers F2FS (Flash-Friendly File System)
 # https://en.wikipedia.org/wiki/F2FS
 
-# Check if /data is already mounted...
-if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2fs" ]; then
+
+# Création du point de montage /data
+[ ! -d /data ] && sudo mkdir /data
+
+# Check if /data can be successfully mounted...
+if ( ! sudo mount -t f2fs -o rw /dev/mmcblk0p3 /data ); then
   if [ "$(getconf PAGESIZE)" == "4096" ]; then
     # Raspberry Pi 4/4b avec pagesize de 4 Kb...
     # Installer les binaires pour le système de fichiers F2FS :
@@ -47,9 +51,6 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
     echo y | sudo RPI_REBOOT=1 rpi-update rpi-6.12.y
   fi
 
-  # Création du point de montage /data
-  [ ! -d /data ] && sudo mkdir /data
-
   # Tester pour s'assurer qu'il n'y a pas eu d'erreur en montant et remontant la partition...
   if ( sudo mount -t f2fs -o rw /dev/mmcblk0p3 /data ); then
     echo === Mount is OK
@@ -68,7 +69,7 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
   exit
 fi
 
-# À partir de ce point, /data *est* monté
+# ******* À partir de ce point, /data *est* monté *******
 
 # On vérifie si le script n'a pas déjà été exécuté
 if [ -f /data/mame/ini/mame.ini ]; then
