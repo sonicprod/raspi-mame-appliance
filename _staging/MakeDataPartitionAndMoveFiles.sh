@@ -28,27 +28,31 @@ if ( ! sudo mount -t f2fs -o rw /dev/mmcblk0p3 /data ); then
   elif [ "$(getconf PAGESIZE)" == "16384" ]; then
     echo "======== Raspberry Pi 5 with 16k pages..."
     # Raspberry Pi 5 avec pagesize de 16 Kb...
-    # We remove the stable branch f2fs-tools, if present
-    sudo apt-get remove f2fs-tools -y
-    # Install the g-dev-test branch of f2fs-tools
-    wget https://github.com/jaegeuk/f2fs-tools/archive/refs/heads/g-dev-test.zip || echo "=== Download of f2fs-tools g-dev-test FAILED"
-    unzip g-dev-test.zip
-    cd f2fs-tools-g-dev-test
-    # Install build dependencies
-    sudo apt-get install automake libtool -y
-    ./autogen.sh && ./configure && make
-    sudo make install
-    sudo ldconfig
-    cd ..
-    sudo rm -Rf f2fs-tools-g-dev-test/
-    rm -f g-dev-test.zip
+    if [ "$(mkfs.f2fs -b 16384 | head -n 1 | sed 's/^[ \t]*//;s/[ \t]*$//')" != "Error: Device not specified" ]; then
+      # We remove the stable branch f2fs-tools, if present
+      sudo apt-get remove f2fs-tools -y
+      # Install the g-dev-test branch of f2fs-tools
+      wget https://github.com/jaegeuk/f2fs-tools/archive/refs/heads/g-dev-test.zip || echo "=== Download of f2fs-tools g-dev-test FAILED"
+      unzip g-dev-test.zip
+      cd f2fs-tools-g-dev-test
+      # Install build dependencies
+      sudo apt-get install automake libtool -y
+      ./autogen.sh && ./configure && make
+      sudo make install
+      sudo ldconfig
+      cd ..
+      sudo rm -Rf f2fs-tools-g-dev-test/
+      rm -f g-dev-test.zip
+    fi
 
     # Formatting the partition with F2FS with a 16k blocksize (-b parameter)
     sudo mkfs.f2fs -f -b 16384 -l data /dev/mmcblk0p3 && echo "=== Format is OK" || echo "=== Format FAILED"
 
     # For mount support, we need kernel 6.12 and up...
     # A reboot will be needed to use the new kernel...
-    echo y | sudo RPI_REBOOT=1 rpi-update rpi-6.12.y
+    if [[ ! $(uname -r) =~ ^6.12.* ]]; then
+      echo y | sudo RPI_REBOOT=1 rpi-update rpi-6.12.y
+    fi
   fi
 fi
 
@@ -57,12 +61,11 @@ if [ "$(findmnt /data -n -o TARGET,SOURCE,FSTYPE)" != "/data  /dev/mmcblk0p3 f2f
   exit
 fi
 
-############### FSTAB
+# Mount persistence in /etc/fstab
 echo "=== Mount is OK ==="
 # Ajout du montage automatique dans /etc/fstab (si pas déjà présent)...
 grep -q "/dev/mmcblk0p3        /data           f2fs" /etc/fstab || \
  sudo sed -ie '\/\s ext4.*/a\/dev/mmcblk0p3        /data           f2fs    defaults,noatime    0    2' /etc/fstab
-#################
 
 # ******* À partir de ce point, /data *est* monté, mais pas nécessairement dans /etc/fstab *******
 
