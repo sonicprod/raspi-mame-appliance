@@ -112,9 +112,7 @@ ln -s ./ini/mame.ini /data/mame/mame.ini
 
 # Redirection des dossiers vers /data afin de permettre la persistence des réglages et données des jeux
 # ainsi qu'une gestion facilitée des ROMs et du matériel graphique associé...
-
-cd ~/mame
-rm -Rf roms ctrlr snap nvram history artwork
+cd ~/mame; rm -Rf roms ctrlr snap nvram history artwork
 cd ~; rmdir .mame .hypseus .advance .attract
 
 ln -s /data/mame    ~/.mame
