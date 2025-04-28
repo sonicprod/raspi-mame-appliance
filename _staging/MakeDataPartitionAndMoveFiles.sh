@@ -64,7 +64,7 @@ fi
 # Mount persistence in /etc/fstab
 echo "=== Mount is OK ==="
 # Ajout du montage automatique dans /etc/fstab (si pas déjà présent)...
-grep -q "/dev/mmcblk0p3        /data           f2fs" /etc/fstab || \
+grep -q "^/dev/mmcblk0p3        /data           f2fs" /etc/fstab || \
  sudo sed -ie '\/\s ext4.*/a\/dev/mmcblk0p3        /data           f2fs    defaults,noatime    0    2' /etc/fstab
 
 # ******* À partir de ce point, /data *est* monté, mais pas nécessairement dans /etc/fstab *******
