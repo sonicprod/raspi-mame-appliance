@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-27
+# Updated: 2025-04-28
 # Author: Benoit Bégin
 #
 # This script:
@@ -49,6 +49,9 @@ if ( ! sudo mount -t f2fs -o rw /dev/mmcblk0p3 /data ); then
     # Formatting the partition with F2FS with a 16k blocksize (-b parameter)
     sudo mkfs.f2fs -f -b 16384 -l data /dev/mmcblk0p3 && echo "=== Format is OK" || echo "=== Format FAILED"
 
+    # Try to mount...
+    sudo mount -t f2fs -o rw /dev/mmcblk0p3 /data  && echo "=== Mount is OK" || echo "=== Mount FAILED"
+
     # For mount support, we need kernel 6.12 and up...
     # A reboot will be needed to use the new kernel...
     if [[ ! $(uname -r) =~ ^6.12.* ]]; then
@@ -79,7 +82,7 @@ fi
 # Création des sous-dossiers, ajustement des permissions, du propriétaire (*owner*) et du groupe
 cd /data
 sudo mkdir -p mame hypseus attract advance
-cd ~/mame
+cd /data/mame
 sudo mkdir -p artwork cabinets cfg cpanels ctrlr diff flyers hi history icons ini inp lua marquees memcard pcb nvram roms snap sta titles ui
 sudo chown -R pi:pi /data
 sudo chmod -R 3774 /data
@@ -104,6 +107,7 @@ mv ~/.hypseus/*        /data/hypseus/
 # Création des symlinks…
 
 # Pour permettre à MAME de trouver son fichier de configuration mame.ini, un symlink est nécessaire...
+cd /data/mame
 ln -s ./ini/mame.ini /data/mame/mame.ini
 
 # Redirection des dossiers vers /data afin de permettre la persistence des réglages et données des jeux
