@@ -28,6 +28,7 @@ if ( ! sudo mount -t f2fs -o rw /dev/mmcblk0p3 /data ); then
   elif [ "$(getconf PAGESIZE)" == "16384" ]; then
     echo "======== Raspberry Pi 5 with 16k pages..."
     # Raspberry Pi 5 avec pagesize de 16 Kb...
+    # Test if the right version (supporting -b option) is not already built and available...
     if [ "$(mkfs.f2fs -b 16384 | head -n 1 | sed 's/^[ \t]*//;s/[ \t]*$//')" != "Error: Device not specified" ]; then
       # We remove the stable branch f2fs-tools, if present
       sudo apt-get remove f2fs-tools -y
