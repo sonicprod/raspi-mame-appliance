@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-23
+# Updated: 2025-04-28
 # Author: Benoit Bégin
 # 
 # This is the "bootstrap" script that chain the "offline" preparation of the image and
@@ -12,7 +12,6 @@
 #   - Call the sequence of scripts for the customizations and the building of apps and services
 #   - Disable the Systemd unit we we're launched from
 #   - Displaying a message to image the SD card to a .img file
-#   - Shutdown the system
 
 GITHUB_SRCBASE=https://github.com/sonicprod/raspi-mame-appliance
 CFGFILENAME=/home/pi/raspi-mame-appliance/_staging/Config.ExportPublicImage.cfg
@@ -66,13 +65,17 @@ echo "================== RaspiOSAppsInstall.sh =================="
 $BASEDIR/RaspiOSAppsInstall.sh
 echo "================== RaspiOSDaemonsInstall.sh =================="
 $BASEDIR/RaspiOSDaemonsInstall.sh
-
 echo "================== MakeDataPartitionAndMoveFiles.sh =================="
 $BASEDIR/MakeDataPartitionAndMoveFiles.sh
+# echo "================== MakeRootFileSystemReadOnly.sh =================="
 # $BASEDIR/MakeRootFileSystemReadOnly.sh
 
 # We disable the Systemd unit we we're launched from
 sudo systemctl disable bootstrap.service
+
+# Cleanup, we remove the raspi-mame-appliance folder
+cd /home/pi
+rm -R ./raspi-mame-appliance
 
 echo "===================================================================="
 echo "                     The steps are complete."
@@ -85,8 +88,7 @@ echo "    journalctl | grep bootstrap"
 echo
 echo "If error-free, this system is now ready to be imaged to a .img file."
 echo
-read -n1 -srp "Press any key to shutdown the system ..."
 echo
+echo "                     End of online automation..."
 
-echo "Shutting down..."
-sudo poweroff
+
