@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-28
+# Updated: 2025-05-02
 # Author: Benoit Bégin
 # 
 # This is the "bootstrap" script that chain the "offline" preparation of the image and
@@ -75,7 +75,7 @@ sudo systemctl disable bootstrap.service
 
 # Cleanup, we remove the raspi-mame-appliance folder
 cd /home/pi
-rm -R ./raspi-mame-appliance
+sudo rm -R ./raspi-mame-appliance
 
 echo "===================================================================="
 echo "                     The steps are complete."
