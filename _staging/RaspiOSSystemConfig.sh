@@ -42,6 +42,9 @@ alias frontend='upd(){ grep -q $1= ~/settings && sed -i "s/^$1=.*$/$2/g" $(readl
 alias mode='m() { [ -z "$1" ] && (echo -n "The system is currently in "; systemctl -q is-active mame-autostart.service && echo -n ARCADE || echo -n SERVICE; echo " mode.") || if [[ "${1,,}" =~ ^(arcade|service)$ ]]; then case "${1,,}" in arcade) sudo systemctl enable mame-autostart.service ;; service) sudo systemctl disable mame-autostart.service ;; esac; else echo "Usage: mode [arcade | service]"; fi; }; m'
 EOF
 
+# We copy the README.txt file to /home/pi
+cp /home/pi/raspi-mame-appliance/_staging/home/pi/README.txt /home/pi
+
 # Supprimer l’avertissement (disclaimer) ci-dessous au login
 sudo rm -f /etc/motd
 
