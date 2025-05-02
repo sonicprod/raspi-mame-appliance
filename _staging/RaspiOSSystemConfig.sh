@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-24
+# Updated: 2025-05-02
 # Author: Benoit Bégin
 # 
 # This script configure base system-wide OS settings
@@ -38,10 +38,8 @@ alias cputemp='/usr/bin/vcgencmd measure_temp'
 alias cpufreq="echo Clock Speed=$(($(/usr/bin/vcgencmd measure_clock arm | awk -F '=' '{print $2}')/1000000)) MHz"
 alias frontend='upd(){ grep -q $1= ~/settings && sed -i "s/^$1=.*$/$2/g" $(readlink -f ~/settings) || echo $2 | tee -a ~/settings;}; _frontend(){ if [[ "${1,,}" =~ ^(mame|attract|advance)$ ]]; then [ ! -f ~/settings ] && touch ~/settings; upd FRONTEND FRONTEND="${1,,}" && echo "Frontend set to: "${1,,}" (reboot to apply)."; case "${1,,}" in mame) [ -z "$2" ] && upd AUTOROM AUTOROM= || (upd AUTOROM AUTOROM="${2,,}"; echo "Automatic ROM Launch set to: "${2,,}".") ;; attract) EMUL=~/.attract/emulators/"$2".cfg; if ([ ! -z "$2" ] && [ ! -z "$3" ] && [ -f $EMUL ]); then (upd AUTOROM "AUTOROM=\""$2" "${3,,}"\""; echo "Automatic ROM Launch set to: "${3,,}" (emulator "$2")."); else [ ! -z "$2" ] && echo "Invalid emulator or missing rom."; upd AUTOROM AUTOROM=; fi; ;; esac; else echo "Invalid or missing argument. Try: mame [rom], attract [emulator rom] or advance"; fi;}; _frontend'
 
-# Aliases to switch between Arcade Mode and Service Mode
-alias arcademode='sudo systemctl enable mame-autostart.service'
-alias servicemode='sudo systemctl disable mame-autostart.service'
-alias mode='echo -n "The system is currently in "; systemctl -q is-active mame-autostart.service && echo -n ARCADE || echo -n SERVICE; echo " mode."'
+# Alias to switch between Arcade Mode and Service Mode (and print the current mode, if no argument is specified)
+alias mode='m() { [ -z "$1" ] && (echo -n "The system is currently in "; systemctl -q is-active mame-autostart.service && echo -n ARCADE || echo -n SERVICE; echo " mode.") || if [[ "${1,,}" =~ ^(arcade|service)$ ]]; then case "${1,,}" in arcade) sudo systemctl enable mame-autostart.service ;; service) sudo systemctl disable mame-autostart.service ;; esac; else echo "Usage: mode [arcade | service]"; fi; }; m'
 EOF
 
 # Supprimer l’avertissement (disclaimer) ci-dessous au login
