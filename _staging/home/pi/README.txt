@@ -1,5 +1,5 @@
 =====================================
-   RASPBERRY PI 4B MAME APPLIANCE
+     RASPBERRY PI MAME APPLIANCE
 
 QUICK DESCRIPTION OF INCLUDED SCRIPTS
 =====================================
@@ -38,9 +38,9 @@ Syntax: ./mame-delartwork.sh [ROMNAME]
 Batch mode: If there is no ROM name specified, the script scan all the ROMs files and automatically delete the unused/unneeded artwork files.
 
 
-mame-launcher.sh
+autostart.sh
 ----------------
-This script launch the MAME emulator and respawn it if quit unexpectedly.
+This script launch the selected frontend (MAME by default) or emulator (if in AUTOROM mode) and respawn it if quit unexpectedly.
 
 This script is called by the Systemd service named mame-autostart.service (while in Arcade Mode).
 
@@ -62,9 +62,10 @@ mame-updater.sh
 ---------------
 This script update MAME to the specified version.
 
-Syntax: ./mame-updater.sh VER
+Syntax: ./mame-updater.sh VER | Latest
 
   Where VER is the 4-digit version number of MAME to update (for example: 0228).
+        Latest grab the latest current version of MAME.
 
 
 --------------------
