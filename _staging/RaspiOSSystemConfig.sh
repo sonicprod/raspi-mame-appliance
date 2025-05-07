@@ -131,4 +131,12 @@ sudo systemctl restart cpufrequtils.service
 # Un peu de ménage en terminant
 sudo apt-get autoremove -y
 
+for f in avahi-daemon.service \
+  dphys-swapfile.service \
+  ModemManager.service \
+  nfs-client.target \
+  wpa_supplicant.service
+do
+  sudo rm /etc/systemd/system/multi-user.target.wants/$f
+done
 
