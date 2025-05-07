@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-03
+# Updated: 2025-05-07
 # Author: Benoit Bégin
 # 
 # This script installs the necessary daemons for the system to act as a MAME appliance
@@ -11,6 +11,10 @@
 #   - mame-bootsplash.service
 #   - mame-shutdownsplash.service
 #   - shutdown.service
+
+# Installation des dépendances
+# mame-artwork-mgmt.service: inotify-tools
+sudo apt-get install inotify-tools -y
 
 # Installation des services
 UNITSRC=/home/pi/raspi-mame-appliance/_staging/etc/systemd/system
