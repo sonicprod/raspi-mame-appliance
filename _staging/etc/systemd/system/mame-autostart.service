@@ -14,8 +14,6 @@ EnvironmentFile=/home/pi/settings
 ExecStart=/home/pi/scripts/autostart.sh
 Restart=on-abort
 RestartSec=5
-TTYPath=/dev/tty1
-StandardInput=tty
 
 [Install]
 WantedBy=multi-user.target
