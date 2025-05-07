@@ -139,4 +139,6 @@ for f in avahi-daemon.service \
 do
   sudo rm /etc/systemd/system/multi-user.target.wants/$f
 done
+sudo rm /etc/systemd/system/bluetooth.target.wants/bluetooth.service
+
 
