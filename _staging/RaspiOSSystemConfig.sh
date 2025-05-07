@@ -130,15 +130,14 @@ sudo systemctl restart cpufrequtils.service
 
 # Un peu de ménage en terminant
 sudo apt-get autoremove -y
-
-for f in avahi-daemon.service \
-  dphys-swapfile.service \
-  ModemManager.service \
-  nfs-client.target \
-  wpa_supplicant.service
-do
-  sudo rm /etc/systemd/system/multi-user.target.wants/$f
-done
+sudo rm /etc/systemd/system/multi-user.target.wants/avahi-daemon.service
+sudo rm /etc/systemd/system/multi-user.target.wants/dphys-swapfile.service
+sudo rm /etc/systemd/system/multi-user.target.wants/ModemManager.service
+sudo rm /etc/systemd/system/multi-user.target.wants/nfs-client.target
+sudo rm /etc/systemd/system/multi-user.target.wants/wpa_supplicant.service
 sudo rm /etc/systemd/system/bluetooth.target.wants/bluetooth.service
-
+sudo rm /etc/systemd/system/dbus-fi.w1.wpa_supplicant1.service
+sudo rm /etc/systemd/system/dbus-org.bluez.service
+sudo rm /etc/systemd/system/dbus-org.freedesktop.Avahi.service
+sudo rm /etc/systemd/system/dbus-org.freedesktop.ModemManager1.service
 
