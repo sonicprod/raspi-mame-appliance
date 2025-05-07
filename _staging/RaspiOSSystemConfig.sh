@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-05-02
+# Updated: 2025-05-07
 # Author: Benoit Bégin
 # 
 # This script configure base system-wide OS settings
@@ -109,6 +109,9 @@ fi
 
 # Désactivation de Avahi (mDNS)
 sudo apt-get remove avahi-daemon -y
+
+# Désactivation de ModemManager (utile pour connexions mobiles)
+sudo apt-get remove modemmanager -y
 
 # Désactivation du client NFS
 sudo apt-get remove nfs-common -y
