@@ -85,8 +85,11 @@ S E R V I C E      M O D E
 IP Address: \4
 EOF
 
+# We find the mountpoint of the boot partition
+BOOTMNT=$(findmnt /dev/mmcblk0p1 -n -o target)
+
 if [ $DisableWiFi == "True" ]; then
-  grep -q "dtoverlay=disable-wifi" /boot/config.txt || sudo tee -a /boot/config.txt << 'EOF'
+  grep -q "dtoverlay=disable-wifi" $BOOTMNT/config.txt || sudo tee -a $BOOTMNT/config.txt << 'EOF'
 # Turns off WiFi (for those who use Ethernet only)
 dtoverlay=disable-wifi
 EOF
@@ -95,7 +98,7 @@ EOF
 fi
 
 if [ $DisableBluetooth == "True" ]; then
-    grep -q "dtoverlay=disable-bt" /boot/config.txt || sudo tee -a /boot/config.txt << 'EOF'
+    grep -q "dtoverlay=disable-bt" $BOOTMNT/config.txt || sudo tee -a $BOOTMNT/config.txt << 'EOF'
 # Turns off Bluetooth
 dtoverlay=disable-bt
 EOF
