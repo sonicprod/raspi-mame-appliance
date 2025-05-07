@@ -17,16 +17,12 @@
 sudo apt-get install inotify-tools -y
 
 # Installation des services
-UNITSRC=/home/pi/raspi-mame-appliance/_staging/etc/systemd/system
-for SVC in mame-autostart.service \
-           mame-bootsplash.service \
-           mame-shutdownsplash.service \
-           mame-artwork-mgmt.service \
-           shutdown.service
-do
-  sudo cp $UNITSRC/$SVC /etc/systemd/system
-  sudo chmod +x /etc/systemd/system/$SVC
-done
+cd /home/pi/raspi-mame-appliance/_staging/etc/systemd/system
+sudo cp mame-autostart.service \
+   mame-bootsplash.service \
+   mame-shutdownsplash.service \
+   mame-artwork-mgmt.service \
+   shutdown.service /etc/systemd/system
 
 # Réactivation du curseur dans la console lorsque le getty@tty1 est activé (Service Mode)...
 echo "setterm --cursor on" | tee -a /home/pi/.bashrc
