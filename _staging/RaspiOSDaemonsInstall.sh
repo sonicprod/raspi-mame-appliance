@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-05-07
+# Updated: 2025-05-08
 # Author: Benoit Bégin
 # 
 # This script installs the necessary daemons for the system to act as a MAME appliance
@@ -43,8 +43,12 @@ cp /home/pi/raspi-mame-appliance/splash/*.jpg /home/pi/splash
 sudo systemctl daemon-reload
 
 sudo systemctl enable mame-bootsplash.service
-# Activation et démarrage des services :
-sudo systemctl enable mame-shutdownsplash.service
-sudo systemctl start mame-shutdownsplash.service
 
+sudo systemctl enable shutdown.service
+
+# Activation et démarrage des services :
+sudo systemctl enable mame-bootsplash.service
+sudo systemctl enable mame-shutdownsplash.service
+sudo systemctl enable shutdown.service
 sudo systemctl enable mame-artwork-mgmt.service
+
