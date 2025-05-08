@@ -42,11 +42,7 @@ cp /home/pi/raspi-mame-appliance/splash/*.jpg /home/pi/splash
 # Systemd daemon reload to update changes
 sudo systemctl daemon-reload
 
-sudo systemctl enable mame-bootsplash.service
-
-sudo systemctl enable shutdown.service
-
-# Activation et démarrage des services :
+# Activation des services :
 sudo systemctl enable mame-bootsplash.service
 sudo systemctl enable mame-shutdownsplash.service
 sudo systemctl enable shutdown.service
