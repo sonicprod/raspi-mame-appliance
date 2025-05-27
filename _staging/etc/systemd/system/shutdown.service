@@ -3,7 +3,6 @@ Description=Shutdown and poweroff service
 After=mame-autostart.service
 
 [Service]
-TTYPath=/dev/tty1
 ExecStart=/sbin/poweroff
 StandardInput=tty
 
