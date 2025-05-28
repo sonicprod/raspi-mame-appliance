@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-24
+# Updated: 2025-05-28
 # Author: Benoit Bégin
 # 
 # This script:
@@ -234,5 +234,5 @@ done
 echo; echo
 echo "Writing $IMGFILE to SD Card (/dev/$DEVICE)..."
 # Writing image to SD Card
-sudo dd if=./$IMGFILE of=/dev/$DEVICE status=progress bs=1M
+sudo dd if=./$IMGFILE of=/dev/$DEVICE status=progress bs=1M && echo "Write OK"
 echo; echo DONE
