@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-05-28
+# Updated: 2025-05-31
 # Author: Benoit Bégin
 # 
 # This script:
@@ -98,7 +98,7 @@ fi
 echo "=========== Installing bootstrap.service unit file for Systemd..."
 [ ! -f bootstrap.service ] && wget https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/PRE-PROCESS/bootstrap.service
 
-sudo chmod 644 ./bootstrap.service
+sudo chmod 644 ./bootstrap.service || echo "ERROR Ajusting exec permission to bootstrap.service"
 sudo mv bootstrap.service /mnt/loop0/etc/systemd/system/
 
 # Enable unit by symlinking
@@ -106,8 +106,8 @@ sudo ln -sf /etc/systemd/system/bootstrap.service /mnt/loop0/etc/systemd/system/
 
 echo "=========== Copy of bootstrap.sh to root filesystem..."
 # And we place it in the rootfs for the first execution
-sudo cp bootstrap.sh /mnt/loop0/usr/lib/raspi-config/
-sudo chmod +x /mnt/loop0/usr/lib/raspi-config/bootstrap.sh
+sudo cp bootstrap.sh /mnt/loop0/usr/lib/raspi-config/ || echo "ERROR Copying bootstrap.sh to root partition!"
+sudo chmod +x /mnt/loop0/usr/lib/raspi-config/bootstrap.sh || echo "ERROR Ajusting exec permission to bootstrap.sh!"
 
 echo "=========== Enabling persistent journald logging..."
 # For debugging and review purpose
@@ -121,33 +121,34 @@ sudo umount /dev/loop0
 echo "=========== Detaching partition #$PARTNUM from /dev/loop0 device..."
 sudo losetup -d /dev/loop0
 
-# We re-read the new partition table
-PARTTAB=$(sfdisk -d $IMGFILE)
-
-# Find end offset of partition PARTNUM
-while read DEV COL VAR1 START VAR2 SIZE TAIL; do
-  [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR1" = "start=" ] && export OFFSETP3=$((${START//,/}+${SIZE//,/}))
-done <<< $PARTTAB
-
 # Grow the image file: add 200 MB to make space for f2fs data rw partition
 echo "=========== Adding +200M to image file $IMGFILE..."
 truncate --size=+200M $IMGFILE
 
+# We re-read the new partition table
+PARTTAB=$(sfdisk -d $IMGFILE)
+
+# Find end offset of partition 2
+while read DEV COL VAR1 START VAR2 SIZE TAIL; do
+  [ "${DEV: -1}" = "2" ] && [ "$VAR1" = "start=" ] && export OFFSETP3=$((${START//,/}+${SIZE//,/}))
+done <<< $PARTTAB
+
 # Create new partition with all available space, type Linux (83)
 echo "=========== Creating/adding a new partition of type 83 (Linux) for f2fs data rw partition..."
+echo "            Offset=$OFFSETP3"
 echo "$OFFSETP3,,83;" | sfdisk --append $IMGFILE
 
 # Attach the image from OFFSETP3 to loop0 device
 echo "=========== Attaching the 3rd partition to /dev/loop0 device..."
-sudo losetup -o $(($OFFSETP3*512)) /dev/loop0 $IMGFILE
+sudo losetup -o $(($OFFSETP3*512)) /dev/loop0 $IMGFILE || echo "ERROR Attaching partition #3!"
 
 echo "=========== Formatting the 3rd partition with F2FS filesystem..."
 command -v mkfs.f2fs >/dev/null 2>&1 || sudo apt install f2fs-tools -y
-sudo mkfs.f2fs -l data /dev/loop0
+sudo mkfs.f2fs -l data /dev/loop0 || echo "ERROR Formatting partition #3!"
 
 # Detach from the loop0 device
 echo "=========== Detaching the 3rd partition from /dev/loop0 device..."
-sudo losetup -d /dev/loop0
+sudo losetup -d /dev/loop0 || echo "ERROR Detaching partition #3!"
 
 echo "=========== CUSTOMIZATIONS OPERATIONS ==========="
 
@@ -166,17 +167,17 @@ done <<< $PARTTAB
 # Mount the boot partition
 echo "=========== Mounting boot partition..."
 [ ! -d /mnt/loop0 ] && sudo mkdir /mnt/loop0
-sudo mount -o offset=$OFFSETP1 $IMGFILE /mnt/loop0
+sudo mount -o offset=$OFFSETP1 $IMGFILE /mnt/loop0 || echo "ERROR Mounting partition #1!"
 
 echo "=========== Enabling SSH with ssh dummy file..."
-[ ! -f /mnt/loop0/ssh ] && sudo touch /mnt/loop0/ssh
+[ ! -f /mnt/loop0/ssh ] && sudo touch /mnt/loop0/ssh  || echo "ERROR Writing ssh file to partition #1!"
 
 echo "=========== Auto-creating pi user with default password (raspberry)..."
 # The creation of the pi user will be done on first boot
 [ ! -f /mnt/loop0/userconf.txt ] && echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee /mnt/loop0/userconf.txt > /dev/null
 
 echo "=========== Unmounting boot partition..."
-sudo umount /mnt/loop0
+sudo umount /mnt/loop0 || echo "ERROR Unmounting partition #1!"
 sudo rmdir /mnt/loop0
 
 # Add _Prepped suffix to image file
