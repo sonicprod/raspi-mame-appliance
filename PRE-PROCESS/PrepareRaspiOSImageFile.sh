@@ -235,5 +235,6 @@ done
 echo; echo
 echo "Writing $IMGFILE to SD Card (/dev/$DEVICE)..."
 # Writing image to SD Card
-sudo dd if=./$IMGFILE of=/dev/$DEVICE status=progress bs=1M && echo "Write OK"
+sudo dd if=./$IMGFILE of=/dev/$DEVICE status=progress bs=1M && echo "Write OK" || echo "ERROR Writing image file to /dev/$DEVICE"
+sync
 echo; echo DONE
