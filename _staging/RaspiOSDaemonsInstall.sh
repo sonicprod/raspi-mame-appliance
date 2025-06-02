@@ -43,6 +43,11 @@ cp /home/pi/raspi-mame-appliance/splash/*.jpg /home/pi/splash
 sudo systemctl daemon-reload
 sleep 3
 
+# Partage de /data via Samba
+# Installation du serveur Samba et des binaires associés :
+sudo apt-get install samba samba-common-bin -y
+patch __
+
 # Activation des services :
 sudo systemctl enable mame-bootsplash.service
 sudo systemctl enable mame-shutdownsplash.service
