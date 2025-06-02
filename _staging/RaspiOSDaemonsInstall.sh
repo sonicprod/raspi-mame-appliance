@@ -46,7 +46,8 @@ sleep 3
 # Partage de /data via Samba
 # Installation du serveur Samba et des binaires associés :
 sudo apt-get install samba samba-common-bin -y
-patch __
+sudo patch /etc/samba/smb.conf < /home/pi/raspi-mame-appliance/_staging/etc/samba/smb.conf.patch && echo "Patching smb.conf OK"
+sudo systemctl restart smbd.service
 
 # Activation des services :
 sudo systemctl enable mame-bootsplash.service
