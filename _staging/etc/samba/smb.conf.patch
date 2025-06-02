@@ -1,1 +1,124 @@
-# FAIRE UN DIFF POUR CRÉER LE PATCH
+--- a/smb.conf  2025-06-02 16:40:48.886354726 -0400
++++ b/smb.conf  2025-06-02 16:43:52.205957242 -0400
+@@ -33,14 +33,14 @@
+ # The specific set of interfaces / networks to bind to
+ # This can be either the interface name or an IP address/netmask;
+ # interface names are normally preferred
+-;   interfaces = 127.0.0.0/8 eth0
++   interfaces = 127.0.0.0/8 eth0
+
+ # Only bind to the named interfaces and/or networks; you must use the
+ # 'interfaces' option above to use this.
+ # It is recommended that you enable this feature if your Samba machine is
+ # not protected by a firewall or is a firewall itself.  However, this
+ # option cannot handle dynamic or non-broadcast interfaces correctly.
+-;   bind interfaces only = yes
++   bind interfaces only = yes
+
+
+
+@@ -74,8 +74,15 @@
+ # new domain.
+    server role = standalone server
+
++   local master = no
++   domain master = no
++   preferred master = no
++
+    obey pam restrictions = yes
+
++   security = user
++   guest account = nobody
++
+ # This boolean parameter controls whether Samba attempts to sync the Unix
+ # password with the SMB password when the encrypted SMB password in the
+ # passdb is changed.
+@@ -166,28 +173,28 @@
+
+ #======================= Share Definitions =======================
+
+-[homes]
+-   comment = Home Directories
+-   browseable = no
++;[homes]
++;   comment = Home Directories
++;   browseable = no
+
+ # By default, the home directories are exported read-only. Change the
+ # next parameter to 'no' if you want to be able to write to them.
+-   read only = yes
++;   read only = yes
+
+ # File creation mask is set to 0700 for security reasons. If you want to
+ # create files with group=rw permissions, set next parameter to 0775.
+-   create mask = 0700
++;   create mask = 0700
+
+ # Directory creation mask is set to 0700 for security reasons. If you want to
+ # create dirs. with group=rw permissions, set next parameter to 0775.
+-   directory mask = 0700
++;   directory mask = 0700
+
+ # By default, \\server\username shares can be connected to by anyone
+ # with access to the samba server.
+ # The following parameter makes sure that only "username" can connect
+ # to \\server\username
+ # This might need tweaking when using external authentication schemes
+-   valid users = %S
++;   valid users = %S
+
+ # Un-comment the following and create the netlogon directory for Domain Logons
+ # (you need to configure Samba to act as a domain controller too.)
+@@ -210,23 +217,23 @@
+ ;   create mask = 0600
+ ;   directory mask = 0700
+
+-[printers]
+-   comment = All Printers
+-   browseable = no
+-   path = /var/tmp
+-   printable = yes
+-   guest ok = no
+-   read only = yes
+-   create mask = 0700
++;[printers]
++;   comment = All Printers
++;   browseable = no
++;   path = /var/tmp
++;   printable = yes
++;   guest ok = no
++;   read only = yes
++;   create mask = 0700
+
+ # Windows clients look for this share name as a source of downloadable
+ # printer drivers
+-[print$]
+-   comment = Printer Drivers
+-   path = /var/lib/samba/printers
+-   browseable = yes
+-   read only = yes
+-   guest ok = no
++;[print$]
++;   comment = Printer Drivers
++;   path = /var/lib/samba/printers
++;   browseable = yes
++;   read only = yes
++;   guest ok = no
+ # Uncomment to allow remote administration of Windows print drivers.
+ # You may need to replace 'lpadmin' with the name of the group your
+ # admin users are members of.
+@@ -234,3 +241,14 @@
+ # to the drivers directory for these users to have write rights in it
+ ;   write list = root, @lpadmin
+
++[Data]
++  path = /data
++  comment = Raspberry Pi MAME Appliance - Persistent data share.
++  available = yes
++  browsable = yes
++  writable = yes
++  guest ok = yes
++  create mask = 0644
++  directory mask = 0755
++  force user = pi
++
