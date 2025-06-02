@@ -47,6 +47,6 @@ sleep 3
 sudo systemctl enable mame-bootsplash.service
 sudo systemctl enable mame-shutdownsplash.service
 sudo systemctl enable mame-autostart.service
-sudo systemctl enable shutdown.service
+# sudo systemctl enable shutdown.service
 sudo systemctl enable mame-artwork-mgmt.service
 
