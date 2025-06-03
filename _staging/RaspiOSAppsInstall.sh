@@ -7,8 +7,8 @@
 #
 # This script:
 #   - Build SDL2 (latest)
-#   - MAME
-#   - Hypseus-Singe
+#   - Build MAME (latest)
+#   - Build Hypseus-Singe (latest)
 
 
 # Launch SDL2 custom build...
