@@ -56,7 +56,9 @@ sed -i 's/ui_path.*$/ui_path                   $HOME\/.mame\/ui/g' /home/pi/.mam
 # Put MAME UI in Available ROMs mode
 sed -i 's/last_used_filter.*$/last_used_filter          Available' /home/pi/.mame/ui.ini
 
+# Test ROM to make sure everything is OK
+# This ROM *will* be deleted and NOT included in the final image
+wget $TestGamePrefixURL/${TestGame}.zip -P /home/pi/.mame/roms
+
 # Build of Hypseus-Singe emulator (latest)...
 /home/pi/scripts/hypseus-build.sh
-
-
