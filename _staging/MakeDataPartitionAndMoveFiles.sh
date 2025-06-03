@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-04-28
+# Updated: 2025-06-03
 # Author: Benoit Bégin
 #
 # This script:
@@ -130,9 +130,9 @@ sudo mkdir -p /data/.sys/alsa
 sudo chown -R root:pi /data/.sys
 
 # Folder to save system environnement variables
-mkdir -p /data/.sys/env
+sudo mkdir -p /data/.sys/env
 # File ~/settings already exist, we move it to persistent /data and link it...
-mv /home/pi/settings /data/.sys/env && ln -s /data/.sys/env/settings /home/pi/settings
+sudo mv /home/pi/settings /data/.sys/env && ln -s /data/.sys/env/settings /home/pi/settings
 
 # We grant rw to owner pi and pi group
 sudo chown -R pi:pi /data/.sys/env
@@ -140,6 +140,7 @@ sudo chmod -R 664 /data/.sys/env/*
 
 # We grant Read+Execute (for directory traversal) to Group+Other
 sudo chmod -R 755 /data/.sys
+sudo chmod -x /data/.sys/env/settings
 
 sudo mv /var/lib/alsa/asound.state /data/.sys/alsa
 
