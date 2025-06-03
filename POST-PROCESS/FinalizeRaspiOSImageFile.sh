@@ -24,7 +24,7 @@ echo "Please put the SD card in the  slot and press a key when done..."
 dd if=/dev/sdX of=$SRCIMG status=progress
 
 # We mount the rootfs from the image...
-sudo losetup $IMGNAME -o $OFFSET    # Offset for the rootfs
+sudo losetup $IMGNAME -o $ROOTOFFSET    # Offset for the rootfs
 sudo mkdir /mnt/loop0
 sudo mount /dev/loop0 /mnt/loop0
 
@@ -44,6 +44,28 @@ MAMEVER=${MAMEVER#mame}
 # Overwrite free space with zeros for maximum compression ratio of the image
 dd if=/dev/zero of=zero
 rm zero
+
+# Unmount rootfs
+sudo umount /mnt/loop0
+sudo rmdir /mnt/loop0
+
+# Mount data r/w filesystem
+sudo losetup $IMGNAME -o $DATAOFFSET    # Offset for the data
+sudo mkdir /mnt/loop0
+sudo mount /dev/loop0 /mnt/loop0
+
+# Jump into the data filesystem and remove test ROMS, if present
+cd /mnt/loop0/mame
+rm -f ./roms/* ./snap/*
+cd /mnt/loop0/
+# Overwrite free space with zeros for maximum compression ratio of the image
+dd if=/dev/zero of=zero
+rm zero
+
+# Unmount data
+sudo umount /mnt/loop0
+sudo rmdir /mnt/loop0
+
 
 # Target image name
 IMGNAME=rpi4up.raspios.mame-$MAMEVER.appliance.fe-edition.img
