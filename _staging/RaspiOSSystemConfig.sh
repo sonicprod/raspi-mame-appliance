@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-05-07
+# Updated: 2025-06-03
 # Author: Benoit Bégin
 # 
 # This script configure base system-wide OS settings
@@ -78,11 +78,13 @@ echo "The system is currently in $(systemctl -q is-active mame-autostart.service
 
 EOF
 
+sudo rm -f /etc/issue.d/IP.issue
 # Add some info to the default issue message
-grep -a "S E R V I C E      M O D E" /etc/issue || sudo tee -a /etc/issue << 'EOF'
+[ ! -f /etc/issue.d/ServiceMode.issue ] && sudo tee /etc/issue.d/ServiceMode.issue << 'EOF'
 S E R V I C E      M O D E
 
 IP Address: \4
+
 EOF
 
 # We find the mountpoint of the boot partition
