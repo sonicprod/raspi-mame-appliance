@@ -36,6 +36,14 @@ if [ -f $IMGNAME.gz ]; then
     rm $IMGNAME.gz
 fi
 
+# We mount the rootfs from the image...
+
+
+# Remove the bootstrap.service files and links
+# Remove the unit file and the associated link
+rm -f $ROOTMNT/etc/systemd/system/bootstrap.service
+rm -f $ROOTMNT/etc/systemd/system/multi-user.target/bootstrap.service
+
 # Écrasement de l'espace libre de rootfs avec des zéros
 if [ "$2" = "zero" ]; then
     $SCRIPTPATH/mount.part.rpi4b.raspios.mame.sh $1 rootfs zero
