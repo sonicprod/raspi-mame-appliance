@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Expand-Data-Partition.sh script at first boot
+Requires=network.target network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/raspi-config/Expand-Data-Partition.sh
+
+[Install]
+WantedBy=multi-user.target
