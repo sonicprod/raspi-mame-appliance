@@ -49,10 +49,9 @@ sudo apt-get install samba samba-common-bin -y
 sudo patch /etc/samba/smb.conf < /home/pi/raspi-mame-appliance/_staging/etc/samba/smb.conf.patch && echo "Patching smb.conf OK"
 sudo systemctl restart smbd.service
 
-# Activation des services :
+# Activation des services (sauf mame-autostart.service et shutdown.service) :
 sudo systemctl enable mame-bootsplash.service
 sudo systemctl enable mame-shutdownsplash.service
 sudo systemctl enable mame-autostart.service
-# sudo systemctl enable shutdown.service
 sudo systemctl enable mame-artwork-mgmt.service
 
