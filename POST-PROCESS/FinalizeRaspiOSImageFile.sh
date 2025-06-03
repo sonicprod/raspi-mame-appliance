@@ -1,5 +1,5 @@
 #!/bin/bash
-# Updated: 2025-0-02
+# Updated: 2025-06-02
 # Author: Benoit Bégin
 
 # This script:
