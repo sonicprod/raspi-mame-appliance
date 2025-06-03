@@ -22,9 +22,5 @@ echo Expand operation completed.
 # We remove ourself to prevent any re-run
 rm /etc/systemd/system//multi-user.target.wants/first-run.service
 rm /etc/systemd/system/first-run.service
-# Systemd daemon reload to update changes
-sudo systemctl daemon-reload
-sleep 3
-
 rm /usr/lib/raspi-config/Expand-Data-Partition.sh
 reboot
