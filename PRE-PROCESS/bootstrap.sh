@@ -76,6 +76,7 @@ sudo systemctl disable bootstrap.service
 # Cleanup, we remove the raspi-mame-appliance folder
 cd /home/pi
 sudo rm -R ./raspi-mame-appliance
+sudo apt-get remove git -y
 sudo apt-get autoremove -y
 
 echo "===================================================================="
