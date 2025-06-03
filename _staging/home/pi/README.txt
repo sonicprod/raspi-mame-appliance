@@ -1,5 +1,5 @@
 ===================================================
-          RASPBERRY PI 4B MAME APPLIANCE
+          RASPBERRY PI 4/5 MAME APPLIANCE
 ===================================================
 
 This image is maintained by:   Sonic Prod
@@ -9,15 +9,15 @@ Pre-built image: http://forum.arcadecontrols.com/index.php/board,57.0.html
 
 Features and functionalities:
 -----------------------------
-- Based on Raspbian Lite (minimal Linux edition based on Debian);
-- At startup, display of a custom splash screen (for example, the MAME logo);
+- Based on Raspberry Pi OS Lite (minimal Linux edition based on Debian);
+- At startup, display of a custom splash screen (for example, the MAME logo in color);
 - The MAME emulator starts automatically and displays the ROM selection screen;
 - When you exit MAME, the system initiates a shutdown;
-- During the shutdown, display of a personalized splash screen (for example, the MAME logo);
+- During the shutdown, display of a personalized splash screen (for example, the MAME logo in b/w);
 - When the stop operations are completed, the system powers off;
 - To preserve the life of the SD card, the root filesystem is kept in read-only mode;
 - ROMs Hiscores are persistent;
-- A maintenance mode is proposed (it's called the Service Mode) to allow system updates and the management of ROMs and Snapshots (via a Samba file share).
+- A maintenance mode is proposed (called the Service Mode) to allow system updates and the management of ROMs and Snapshots (via a Samba file share).
 - While in Service Mode:
   - As soon as you add new ROM files, the snapshots/titles (and others, if available) images will be scraped/downloaded automatically.
   - As soon as you remove/delete ROM files, the associated graphic files will be deleted.
@@ -74,9 +74,9 @@ The system operates in two (2) modes:
 
 To toggle between modes, just use one of the corresponding commands (in read/write mode):
 
-  servicemode
+  mode service
      -or-
-  arcademode
+  mode arcade
 
 You then need to reboot, by issuing the following command:
 
@@ -148,7 +148,7 @@ To add (or remove) ROMs on the system, you should first be in Service mode. Then
 For Windows systems, use: \\arcade\data
 For Linux systems,   use: smb://arcade/data
 
-Open the "roms" folder, then add or remove the ROMs of your choice.
+Open the "roms" folder under the "mame" folder, then add or remove the ROMs of your choice.
 
 As soon as you add a new ROM, the system will automatically download the corresponding artwork files (if Internet connectivity is available).
 As soon as you remove/delete an existing ROM from the roms folder, the system will automatically delete the corresponding artwork files to make free space.
@@ -220,9 +220,10 @@ mame-updater.sh
 ---------------
 This script update MAME to the specified version.
 
-Syntax: ./mame-updater.sh VER
+Syntax: ./mame-updater.sh VER | Latest
 
   Where VER is the 4-digit version number of MAME to update (for example: 0228).
+  OR use the argument Latest to update to the latest available MAME version.
 
 
 --------------------
@@ -237,7 +238,7 @@ This script is automatically called at every interactive login (console or SSH).
   KNOWN ISSUES
 =================
 
-- Kernel 5.10 is introducing USB bugs that momentarily freeze the USB bus. Until this is fixed, we should stay on 5.4 kernel. Use the following command to put on hold the current (stable) kernel:
+#- Kernel 5.10 is introducing USB bugs that momentarily freeze the USB bus. Until this is fixed, we should stay on 5.4 kernel. Use the following command to put on hold the current (stable) kernel:
     sudo apt-mark hold raspberrypi-kernel
 
 - The Configure Options / Video Options sub-menu from the main selection screen (GUI) is throwing a Segmentation fault. This is caused by the fact that we patched the source code with a dirty fix just to be able to successfully build. A MAME developper has to find a proper fix. A bug has been filed on mametesters.org (ID=07738).
