@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-05-08
+# Updated: 2025-06-03
 # Author: Benoit Bégin
 # 
 # This script installs the necessary daemons for the system to act as a MAME appliance
