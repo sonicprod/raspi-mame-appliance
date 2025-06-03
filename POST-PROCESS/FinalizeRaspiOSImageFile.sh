@@ -48,10 +48,11 @@ rm zero
 # Target image name
 IMGNAME=rpi4up.raspios.mame-$MAMEVER.appliance.fe-edition.img
 # We delete the target image, if it already exist
-rm -f $IMGNAME.gz
+rm -f $IMGNAME.xz
 
-echo -n "Compressing $IMGNAME..."
-gzip -9 -k $IMGNAME
+echo -n "Compressing $IMGNAME with xz..."
+# We keep the original file with -k
+xz -k $IMGNAME
 echo
 
-ls -la $IMGNAME $IMGNAME.gz
+ls -la $IMGNAME $IMGNAME.xz
