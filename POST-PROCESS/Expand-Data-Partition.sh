@@ -7,6 +7,8 @@
 # Runtime Context: root
 
 echo ---------------------------------------------
+echo Begin execution of: Expand-Data-Partition.sh
+echo ---------------------------------------------
 echo CURRENT size of /data: $(df -Th /data | awk '/\/data/{print $3}')
 echo ---------------------------------------------
 umount /data
@@ -18,6 +20,9 @@ echo ---------------------------------------------
 echo NEW size of /data: $(df -Th /data | awk '/\/data/{print $3}')
 echo ---------------------------------------------
 echo Expand operation completed.
+echo ---------------------------------------------
+echo End execution of: Expand-Data-Partition.sh
+echo ---------------------------------------------
 
 # We remove ourself to prevent any re-run
 rm /etc/systemd/system//multi-user.target.wants/first-run.service
