@@ -37,14 +37,17 @@ if [ -f $IMGNAME.gz ]; then
 fi
 
 # We mount the rootfs from the image...
-# Install first-run.service and enable it (link)
-cp POST-PROCESS/first-run.service $ROOTMNT/etc/systemd/system
-ln -s 
+sudo losetup $IMGNAME -o $OFFSET    # Offset for the rootfs
+sudo mkdir /mnt/loop0
+sudo mount /dev/loop0 /mnt/loop0
 
-# Remove the bootstrap.service files and links
-# Remove the unit file and the associated link
-rm -f $ROOTMNT/etc/systemd/system/bootstrap.service
-rm -f $ROOTMNT/etc/systemd/system/multi-user.target/bootstrap.service
+# Install first-run.service and enable it (link)
+sudo cp POST-PROCESS/first-run.service $ROOTMNT/etc/systemd/system
+sudo ln -sf /etc/systemd/system/first-run.service /mnt/loop0/etc/systemd/system/multi-user.target.wants/first-run.service
+
+# Remove the bootstrap.service unit file and associated link (if present)
+sudo rm -f /mnt/loop0/etc/systemd/system/bootstrap.service
+sudo rm -f /mnt/loop0/etc/systemd/system/multi-user.target/bootstrap.service
 
 # Écrasement de l'espace libre de rootfs avec des zéros
 if [ "$2" = "zero" ]; then
