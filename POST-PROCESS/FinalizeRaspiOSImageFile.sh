@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # - Mount the boot partition
-# - Add the init=/usr/lib/raspi-config/Expand-Data-Partition.sh to $BOOTDIR/cmdline.txt
 # - Mount the rootfs partition
 # - Remove (rm) the bootstrap.service unit file and associated links (if applicable)
+# - Copy POST-PROCESS/Expand-Data-Partition.sh to /usr/lib/raspi-config/
+# - Install the firstrun.service, wich calls /usr/lib/raspi-config/Expand-Data-Partition.sh
 # - Comment Storage= in /etc/systemd/journald.conf
 # - Cleanup command history, journalctl, rm ~/.sudo_as_admin_successful ~/.lesshst
 # - Fill the free space with zeros (/dev/zero) to make a more compact .img file, once compressed
