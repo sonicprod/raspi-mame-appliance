@@ -7,7 +7,7 @@
 # - Mount the rootfs partition
 # - Remove (rm) the bootstrap.service unit file and associated links (if applicable)
 # - Copy POST-PROCESS/Expand-Data-Partition.sh to /usr/lib/raspi-config/
-# - Install the firstrun.service, wich calls /usr/lib/raspi-config/Expand-Data-Partition.sh
+# - Install the first-run.service, wich calls /usr/lib/raspi-config/Expand-Data-Partition.sh
 # - Comment Storage= in /etc/systemd/journald.conf
 # - Cleanup command history, journalctl, rm ~/.sudo_as_admin_successful ~/.lesshst
 # - Fill the free space with zeros (/dev/zero) to make a more compact .img file, once compressed
@@ -37,7 +37,9 @@ if [ -f $IMGNAME.gz ]; then
 fi
 
 # We mount the rootfs from the image...
-
+# Install first-run.service and enable it (link)
+cp POST-PROCESS/first-run.service $ROOTMNT/etc/systemd/system
+ln -s 
 
 # Remove the bootstrap.service files and links
 # Remove the unit file and the associated link
