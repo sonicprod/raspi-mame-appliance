@@ -1,5 +1,8 @@
 #!/bin/bash
+# Updated: 2025-0-02
+# Author: Benoit Bégin
 
+# This script:
 # - Mount the boot partition
 # - Mount the rootfs partition
 # - Remove (rm) the bootstrap.service unit file and associated links (if applicable)
