@@ -3,6 +3,7 @@
 # Author: Benoit Bégin
 
 # This script:
+# - Image back the SD card to an image file
 # - Mount the boot partition
 # - Mount the rootfs partition
 # - Remove (rm) the bootstrap.service unit file and associated links (if applicable)
@@ -16,25 +17,11 @@
 
 # TO BE UPDATED - TO BE UPDATED - TO BE UPDATED - TO BE UPDATED - TO BE UPDATED -TO BE UPDATED -
 
-if [ ! $1 ]; then
-    echo Usage: $0 VER [zero]
-    echo '  Where VER is the 4-digit version number of MAME to update (for example: 0224).'
-    echo '  Where zero overwrite the free space with zeros to optimize compression.'
-    exit
-fi
+SRCIMG=SDCard_Imaged.img
 
-# IMGNAME=rpi4b.raspios.mame-$1.appliance.img
-IMGNAME=rpi4b.raspios.mame-$1.appliance.fe-edition.img
-SCRIPTPATH=${0%/*}
-
-if [ ! -f $IMGNAME ]; then
-    echo $IMGNAME does not exist!
-    exit
-fi
-
-if [ -f $IMGNAME.gz ]; then
-    rm $IMGNAME.gz
-fi
+# Image back the SD card to an image file
+echo "Please put the SD card in the  slot and press a key when done..."
+dd if=/dev/sdX of=$SRCIMG status=progress
 
 # We mount the rootfs from the image...
 sudo losetup $IMGNAME -o $OFFSET    # Offset for the rootfs
@@ -49,10 +36,19 @@ sudo ln -sf /etc/systemd/system/first-run.service /mnt/loop0/etc/systemd/system/
 sudo rm -f /mnt/loop0/etc/systemd/system/bootstrap.service
 sudo rm -f /mnt/loop0/etc/systemd/system/multi-user.target/bootstrap.service
 
-# Écrasement de l'espace libre de rootfs avec des zéros
-if [ "$2" = "zero" ]; then
-    $SCRIPTPATH/mount.part.rpi4b.raspios.mame.sh $1 rootfs zero
-fi
+# Get the MAME version inside the rootfs partition
+cd /mnt/loop0/home/pi
+MAMEVER=$(find . -maxdepth 1 -type d -name "mame*" -printf '%P\n')
+MAMEVER=${MAMEVER#mame}
+
+# Overwrite free space with zeros for maximum compression ratio of the image
+dd if=/dev/zero of=zero
+rm zero
+
+# Target image name
+IMGNAME=rpi4up.raspios.mame-$MAMEVER.appliance.fe-edition.img
+# We delete the target image, if it already exist
+rm -f $IMGNAME.gz
 
 echo -n "Compressing $IMGNAME..."
 gzip -9 -k $IMGNAME
