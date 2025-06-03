@@ -38,7 +38,7 @@ sudo rm -f /mnt/loop0/etc/systemd/system/multi-user.target/bootstrap.service
 
 # Get the MAME version inside the rootfs partition
 cd /mnt/loop0/home/pi
-MAMEVER=$(find . -maxdepth 1 -type d -name "mame*" -printf '%P\n')
+MAMEVER=$(find . -maxdepth 1 -type d -name "mame*" -printf '%P\n' -quit)
 MAMEVER=${MAMEVER#mame}
 
 # Overwrite free space with zeros for maximum compression ratio of the image
