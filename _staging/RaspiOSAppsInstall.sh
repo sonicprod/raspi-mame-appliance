@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-03
+# Updated: 2025-06-03
 # Author: Benoit Bégin
 # 
 # This script built and installs the applications and their dependencies
@@ -52,6 +52,9 @@ sed -i 's/titles_directory.*$/titles_directory          $HOME\/.mame\/titles/g' 
 sed -i 's/marquees_directory.*$/marquees_directory        $HOME\/.mame\/marquees/g' /home/pi/.mame/ui.ini
 sed -i 's/icons_directory.*$/icons_directory           $HOME\/.mame\/icons/g' /home/pi/.mame/ui.ini
 sed -i 's/ui_path.*$/ui_path                   $HOME\/.mame\/ui/g' /home/pi/.mame/ui.ini
+
+# Put MAME UI in Available ROMs mode
+sed -i 's/last_used_filter.*$/last_used_filter          Available' /home/pi/.mame/ui.ini
 
 # Build of Hypseus-Singe emulator (latest)...
 /home/pi/scripts/hypseus-build.sh
