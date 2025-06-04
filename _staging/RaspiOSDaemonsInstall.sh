@@ -49,7 +49,10 @@ sudo apt-get install samba samba-common-bin -y
 sudo patch /etc/samba/smb.conf < /home/pi/raspi-mame-appliance/_staging/etc/samba/smb.conf.patch && echo "Patching smb.conf OK"
 sudo systemctl restart smbd.service
 
-# Activation des services (sauf mame-autostart.service et shutdown.service) :
+# Désactivation de ces 2 services pour forcer le Service Mode à ce stade
+sudo systemctl disable mame-autostart.service
+sudo systemctl disable shutdown.service
+# Activation des services
 sudo systemctl enable mame-bootsplash.service
 sudo systemctl enable mame-shutdownsplash.service
 sudo systemctl enable mame-autostart.service
