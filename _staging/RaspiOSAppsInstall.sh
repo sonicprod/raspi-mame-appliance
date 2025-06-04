@@ -58,7 +58,7 @@ sed -i 's/last_used_filter.*$/last_used_filter          Available' /home/pi/.mam
 
 # Test ROM to make sure everything is OK
 # This ROM *will* be deleted and NOT included in the final image
-wget $TestGamePrefixURL/${TestGame}.zip -P /home/pi/.mame/roms
+[ ! -z $TestGame ] && [ ! -z $TestGamePrefixURL ] && wget $TestGamePrefixURL/${TestGame}.zip -P /home/pi/mame/roms
 
 # Build of Hypseus-Singe emulator (latest)...
 /home/pi/scripts/hypseus-build.sh
