@@ -45,6 +45,10 @@ MAMEVER=${MAMEVER#mame}
 # Flush ALL journalctl entries
 sudo rm -R /var/log/journal/*
 
+# Flush history data
+cd /mnt/loop0/home/pi
+rm .bash_history .sudo_as_admin_successful .lesshst
+
 # ------------------------------------
 # Overwrite free space with zeros for maximum compression ratio of the image
 dd if=/dev/zero of=zero
