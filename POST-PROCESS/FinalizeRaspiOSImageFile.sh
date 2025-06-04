@@ -23,6 +23,7 @@ SRCIMG=SDCard_Imaged.img
 echo "Please put the SD card in the  slot and press a key when done..."
 dd if=/dev/sdX of=$SRCIMG status=progress
 
+# ------------------------------------
 # We mount the rootfs from the image...
 sudo losetup $IMGNAME -o $ROOTOFFSET    # Offset for the rootfs
 sudo mkdir /mnt/loop0
@@ -41,6 +42,10 @@ cd /mnt/loop0/home/pi
 MAMEVER=$(find . -maxdepth 1 -type d -name "mame*" -printf '%P\n' -quit)
 MAMEVER=${MAMEVER#mame}
 
+# Flush ALL journalctl entries
+sudo rm -R /var/log/journal/*
+
+# ------------------------------------
 # Overwrite free space with zeros for maximum compression ratio of the image
 dd if=/dev/zero of=zero
 rm zero
