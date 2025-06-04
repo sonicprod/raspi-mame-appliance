@@ -3,7 +3,7 @@
 # Updated: 2025-06-03
 # Author: Benoit Bégin
 # 
-# This script built and installs the applications and their dependencies
+# This script build and installs the applications and their dependencies
 #
 # This script:
 #   - Build SDL2 (latest)
