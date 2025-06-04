@@ -56,7 +56,11 @@ sudo mount /dev/loop0 /mnt/loop0
 
 # Jump into the data filesystem and remove test ROMS, if present
 cd /mnt/loop0/mame
-rm -f ./roms/* ./snap/*
+sudo rm -f ./roms/* ./snap/*
+
+# Cleanup traces of MAME ROM tests
+sudo sed -i 's/last_used_machine.*$/last_used_machine          /g' /mnt/loop0/mame/ini/ui.ini
+
 cd /mnt/loop0/
 # Overwrite free space with zeros for maximum compression ratio of the image
 dd if=/dev/zero of=zero
