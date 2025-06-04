@@ -8,6 +8,7 @@
 # This script:
 #   - Build SDL2 (latest)
 #   - Build MAME (latest)
+#   - Configure MAME (basic)
 #   - Build Hypseus-Singe (latest)
 
 
