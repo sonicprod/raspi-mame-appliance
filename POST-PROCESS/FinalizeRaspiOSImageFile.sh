@@ -47,7 +47,7 @@ sudo rm -R /var/log/journal/*
 
 # Flush history data
 cd /mnt/loop0/home/pi
-rm .bash_history .sudo_as_admin_successful .lesshst
+rm .bash_history .sudo_as_admin_successful .lesshst .wget-hsts
 
 # ------------------------------------
 # Overwrite free space with zeros for maximum compression ratio of the image
