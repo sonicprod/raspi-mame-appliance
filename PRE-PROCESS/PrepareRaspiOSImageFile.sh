@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-05-31
+# Updated: 2025-06-03
 # Author: Benoit Bégin
 # 
 # This script:
@@ -13,8 +13,7 @@
 #   - Install bootstrap.service Systemd unit file and script (bootstrap.sh) so the process can start automatically at first boot
 #   - Optionnaly write the prepped disk image to a physical SD Card
 
-IMGFILE=$(find . -maxdepth 1 -type f -name '20*.img.xz' -print)
-IMGFILE=${IMGFILE#"./"}	# Remove the ./ prefix
+IMGFILE=$(find . -maxdepth 1 -type f -name '20*.img.xz' -printf '%P\n' -quit)
 FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
 REEPOBASEURL=https://github.com/sonicprod/raspi-mame-appliance
 
@@ -33,8 +32,7 @@ echo "=========== Downloading the latest RaspiOS Lite arm64..."
 # Get the latest RaspiOS Lite for arm64
 wget --trust-server-names $FETCHURL
 
-IMGFILE=$(find . -maxdepth 1 -type f -ctime -1 -name '20*.img.xz' -print)
-IMGFILE=${IMGFILE#"./"}	# Remove the ./ prefix
+IMGFILE=$(find . -maxdepth 1 -type f -ctime -1 -name '20*.img.xz' -printf '%P\n' -quit)
 
 if [ ! -f "$IMGFILE" ]; then
   echo "$IMGFILE does not exist, aborting..."
