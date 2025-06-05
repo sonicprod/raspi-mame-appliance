@@ -58,18 +58,19 @@ rm zero
 sudo umount /mnt/loop0
 sudo rmdir /mnt/loop0
 
+# ------------------------------------
 # Mount data r/w filesystem
 sudo losetup $IMGNAME -o $DATAOFFSET    # Offset for the data
 sudo mkdir /mnt/loop0
 sudo mount /dev/loop0 /mnt/loop0
 
-# Jump into the data filesystem and remove test ROMS, if present
-cd /mnt/loop0/mame
-sudo rm -f ./roms/* ./snap/*
+# Jump into the data filesystem and remove test ROM and related files, if present
+find /mnt/loop0/mame -type f -name gunsmoke.* | xargs rm
 
 # Cleanup traces of MAME ROM tests
 sudo sed -i 's/last_used_machine.*$/last_used_machine          /g' /mnt/loop0/mame/ini/ui.ini
 
+# ------------------------------------
 cd /mnt/loop0/
 # Overwrite free space with zeros for maximum compression ratio of the image
 dd if=/dev/zero of=zero
