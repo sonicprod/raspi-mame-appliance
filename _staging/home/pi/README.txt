@@ -238,8 +238,4 @@ This script is automatically called at every interactive login (console or SSH).
   KNOWN ISSUES
 =================
 
-#- Kernel 5.10 is introducing USB bugs that momentarily freeze the USB bus. Until this is fixed, we should stay on 5.4 kernel. Use the following command to put on hold the current (stable) kernel:
-    sudo apt-mark hold raspberrypi-kernel
-
 - The Configure Options / Video Options sub-menu from the main selection screen (GUI) is throwing a Segmentation fault. This is caused by the fact that we patched the source code with a dirty fix just to be able to successfully build. A MAME developper has to find a proper fix. A bug has been filed on mametesters.org (ID=07738).
-
