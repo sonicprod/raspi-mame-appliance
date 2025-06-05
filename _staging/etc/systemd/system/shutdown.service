@@ -4,7 +4,6 @@ After=mame-autostart.service
 
 [Service]
 ExecStart=/sbin/poweroff
-StandardInput=tty
 
 [Install]
 WantedBy=multi-user.target
