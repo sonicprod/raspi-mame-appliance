@@ -13,6 +13,9 @@
 #   - Install bootstrap.service Systemd unit file and script (bootstrap.sh) so the process can start automatically at first boot
 #   - Optionnaly write the prepped disk image to a physical SD Card
 
+# TODO:
+#  - Use "partx -av + partx -dv" instead of using losetup with manual offset calculations
+
 IMGFILE=$(find . -maxdepth 1 -type f -name '20*.img.xz' -printf '%P\n' -quit)
 FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
 REEPOBASEURL=https://github.com/sonicprod/raspi-mame-appliance
