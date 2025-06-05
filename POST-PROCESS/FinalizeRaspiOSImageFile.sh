@@ -36,7 +36,24 @@ fi
 
 # Image back the SD card to an image file
 echo "Please put the SD card in the  slot and press a key when done..."
-dd if=/dev/sdX of=$SRCIMG status=progress
+dd if=/dev/sdX of=$SRCIMG status=progress bs=1M
+
+# Easier and quicker with partx
+sudo partx -av $SRCIMG
+
+sudo mount /dev/loop0p1 /mnt/boot
+# ...  do something with the boot partition  ...
+sudo umount /dev/loop0p1
+
+sudo mount /dev/loop0p2 /mnt/rootfs
+# ...  do something with the rootfs partition  ...
+sudo umount /dev/loop0p2
+
+sudo mount /dev/loop0p3 /mnt/data
+# ...  do something with the data partition  ...
+sudo umount /dev/loop0p3
+
+sudo partx -dv /dev/loop0
 
 # ------------------------------------
 # We mount the rootfs from the image...
