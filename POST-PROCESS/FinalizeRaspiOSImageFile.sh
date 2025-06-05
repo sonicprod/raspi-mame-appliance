@@ -23,13 +23,12 @@ CFGFILENAME=Config.ExportPublicImage.cfg
 SRCIMG=SDCard_Imaged.img
 
 # We re-fetch the config file and parse it
-wget $CFGURL/$CFGFILENAME
+CFG=$(wget -q -O - $CFGURL/$CFGFILENAME)
 # Load config file settings for effective cleanup...
-if [ -f $CFGFILENAME ]; then
+if [ ! -z $CFG ]; then
   while IFS="= " read VAR VALUE; do
     [ ! -z $VAR ] && [ "${VAR:0:1}" != "#" ] && export $VAR="$VALUE"
-  done < $CFGFILENAME
-  rm -f $CFGFILENAME
+  done <<< "$CFG"
 else
   echo "Config file ($CFGFILENAME) was not found! Fatal error, end of script."
   exit
