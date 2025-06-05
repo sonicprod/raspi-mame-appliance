@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-06-03
+# Updated: 2025-06-05
 # Author: Benoit Bégin
 # 
 # This script:
@@ -12,9 +12,6 @@
 #   - Auto-creating pi user with default password (raspberry)
 #   - Install bootstrap.service Systemd unit file and script (bootstrap.sh) so the process can start automatically at first boot
 #   - Optionnaly write the prepped disk image to a physical SD Card
-
-# TODO:
-#  - Use "partx -av + partx -dv" instead of using losetup with manual offset calculations
 
 IMGFILE=$(find . -maxdepth 1 -type f -name '20*.img.xz' -printf '%P\n' -quit)
 FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
@@ -51,77 +48,62 @@ echo
 # Remove the .xz extension
 IMGFILE=${IMGFILE%.*}
 
+# Create loop devices for each detected partitions/filesystems
+sudo partx -av $IMGFILE
+
+# Mount points creation
+sudo mkdir /mnt/loop0p1 /mnt/loop0p2 /mnt/loop0p3
+
+echo "=========== Mounting boot partition..."
+sudo mount /dev/loop0p1 /mnt/loop0p1 || echo "ERROR Mounting partition #1 !"
+
+# ----------------------- Do something with the boot partition -----------------------
+echo "=========== CUSTOMIZATION OF BOOT PARTITION ==========="
+
+echo "=========== Enabling SSH Server on first boot..."
+[ ! -f /mnt/loop0p1/ssh ] && sudo touch /mnt/loop0p1/ssh  || echo "ERROR Writing ssh file to partition #1 !"
+
+echo "=========== Auto-creating pi user with default password (raspberry)..."
+# The creation of the pi user will be done on first boot
+[ ! -f /mnt/loop0p1/userconf.txt ] && echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee /mnt/loop0p1/userconf.txt > /dev/null
+
+# ----------------------- Done with the boot partition -----------------------
+echo "=========== Unmounting boot partition..."
+sudo umount /mnt/loop0p1 || echo "ERROR Unmounting partition #1 !"
+sudo rmdir /mnt/loop0p1
+
+# ----------------------- Do something with the rootfs partition -----------------------
+# We free the image from the devices, we need to expand it for P2
+sudo partx -dv /dev/loop0
+
 echo "=========== PARTITIONS OPERATIONS ==========="
 # Get the current partition table
 PARTTAB=$(sfdisk -d $IMGFILE)
 
-# Rootfs partition is #2
-PARTNUM=2
-
+# P2
 # Grow the image file: add 16 GB to expand root fs
 echo "=========== Adding +16G to image file $IMGFILE..."
 truncate --size=+16G $IMGFILE
 
-# Expand partition #2 (root fs)
-echo "=========== Expanding root fs partition #$PARTNUM..."
+# Expand rootfs partition entry in partition table
+echo "=========== Expanding rootfs partition entry..."
 echo ", +16G" | sfdisk -N 2 $IMGFILE
 
-# Find start OFFSETP2 of partition PARTNUM
-while read DEV COL VAR START TAIL; do
-  [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR" = "start=" ] && export OFFSETP2=$((${START//,/}*512))
-done <<< $PARTTAB
-
-# Attach the image from OFFSETP2 to loop0 device
-echo "=========== Attaching partition #$PARTNUM to /dev/loop0 device..."
-sudo losetup -o $OFFSETP2 /dev/loop0 $IMGFILE
+# We re-attach loop devices (normally 2 devices would be created)
+sudo partx -av $IMGFILE
 
 # Check the root filesystem first
 echo "=========== First, check the filesystem integrity..."
-sudo e2fsck -f /dev/loop0
+sudo e2fsck -f /dev/loop0p2
 
 # Resize the root filesystem on loop0 device
 echo "=========== Then, resize this filesystem to expand/use all available partition space..."
-sudo resize2fs /dev/loop0
+sudo resize2fs /dev/loop0p2 && echo "Resize/expand rootfs OK"
 
-echo "=========== Mounting the root filesystem..."
-# Mount the root filesystem
-[ ! -d /mnt/loop0 ] && sudo mkdir /mnt/loop0
-sudo mount /dev/loop0 /mnt/loop0
+# We free the image from the devices, we need to expand it (again) for P3
+sudo partx -dv /dev/loop0
 
-# We fetch bootstrap.sh from the Github repo...
-[ ! -f bootstrap.sh ] && wget https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/PRE-PROCESS/bootstrap.sh
-
-if [ ! -f bootstrap.sh ]; then
-  echo "Error downloading bootstrap.sh from the Github repo!"
-  exit
-fi
-
-echo "=========== Installing bootstrap.service unit file for Systemd..."
-[ ! -f bootstrap.service ] && wget https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/PRE-PROCESS/bootstrap.service
-
-sudo chmod 644 ./bootstrap.service || echo "ERROR Ajusting exec permission to bootstrap.service"
-sudo mv bootstrap.service /mnt/loop0/etc/systemd/system/
-
-# Enable unit by symlinking
-sudo ln -sf /etc/systemd/system/bootstrap.service /mnt/loop0/etc/systemd/system/multi-user.target.wants/bootstrap.service
-
-echo "=========== Copy of bootstrap.sh to root filesystem..."
-# And we place it in the rootfs for the first execution
-sudo cp bootstrap.sh /mnt/loop0/usr/lib/raspi-config/ || echo "ERROR Copying bootstrap.sh to root partition!"
-sudo chmod +x /mnt/loop0/usr/lib/raspi-config/bootstrap.sh || echo "ERROR Ajusting exec permission to bootstrap.sh!"
-
-echo "=========== Enabling persistent journald logging..."
-# For debugging and review purpose
-sudo sed -i "s/^#\{0,1\}Storage=.*$/Storage=persistent/g" /mnt/loop0/etc/systemd/journald.conf
-
-echo "=========== Unmounting the root filesystem..."
-# Unmount the root filesystem
-sudo umount /dev/loop0
-
-# Detach from the loop0 device
-echo "=========== Detaching partition #$PARTNUM from /dev/loop0 device..."
-sudo losetup -d /dev/loop0
-
+# P3
 # Grow the image file: add 200 MB to make space for f2fs data rw partition
 echo "=========== Adding +200M to image file $IMGFILE..."
 truncate --size=+200M $IMGFILE
@@ -139,47 +121,57 @@ echo "=========== Creating/adding a new partition of type 83 (Linux) for f2fs da
 echo "            Offset=$OFFSETP3"
 echo "$OFFSETP3,,83;" | sfdisk --append $IMGFILE
 
-# Attach the image from OFFSETP3 to loop0 device
-echo "=========== Attaching the 3rd partition to /dev/loop0 device..."
-sudo losetup -o $(($OFFSETP3*512)) /dev/loop0 $IMGFILE || echo "ERROR Attaching partition #3!"
+# We re-attach loop devices (normally 3 devices would be created)
+sudo partx -av $IMGFILE
 
 echo "=========== Formatting the 3rd partition with F2FS filesystem..."
 command -v mkfs.f2fs >/dev/null 2>&1 || sudo apt install f2fs-tools -y
-sudo mkfs.f2fs -l data /dev/loop0 || echo "ERROR Formatting partition #3!"
+sudo mkfs.f2fs -l data /dev/loop0p3 || echo "ERROR Formatting partition #3!"
 
-# Detach from the loop0 device
-echo "=========== Detaching the 3rd partition from /dev/loop0 device..."
-sudo losetup -d /dev/loop0 || echo "ERROR Detaching partition #3!"
+echo "=========== END OF PARTITIONS OPERATIONS ==========="
 
-echo "=========== CUSTOMIZATIONS OPERATIONS ==========="
+echo "=========== CUSTOMIZATION OF ROOTFS ==========="
+# P2
+echo "=========== Mounting the root filesystem..."
+# Mount the root filesystem
+sudo mount /dev/loop0p2 /mnt/loop0p2 || echo "Mounting of rootfs FAILED"
 
-# Enable SSH server on first boot
-echo "=========== Enabling SSH Server on first boot..."
-# Mount first partition (boot)
+# We fetch bootstrap.sh from the Github repo...
+[ ! -f bootstrap.sh ] && wget https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/PRE-PROCESS/bootstrap.sh
 
-# Bootfs partition is #1
-PARTNUM=1
+if [ ! -f bootstrap.sh ]; then
+  echo "Error downloading bootstrap.sh from the Github repo!"
+  exit
+fi
 
-# Find start offset of partition PARTNUM
-while read DEV COL VAR START TAIL; do
-  [ "${DEV: -1}" = "$PARTNUM" ] && [ "$VAR" = "start=" ] && export OFFSETP1=$((${START//,/}*512))
-done <<< $PARTTAB
+echo "=========== Installing bootstrap.service unit file for Systemd..."
+[ ! -f bootstrap.service ] && wget https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/PRE-PROCESS/bootstrap.service
 
-# Mount the boot partition
-echo "=========== Mounting boot partition..."
-[ ! -d /mnt/loop0 ] && sudo mkdir /mnt/loop0
-sudo mount -o offset=$OFFSETP1 $IMGFILE /mnt/loop0 || echo "ERROR Mounting partition #1!"
+sudo chmod 644 ./bootstrap.service || echo "ERROR Ajusting exec permission to bootstrap.service"
+sudo mv bootstrap.service /mnt/loop0p2/etc/systemd/system/
 
-echo "=========== Enabling SSH with ssh dummy file..."
-[ ! -f /mnt/loop0/ssh ] && sudo touch /mnt/loop0/ssh  || echo "ERROR Writing ssh file to partition #1!"
+# Enable unit by symlinking
+sudo ln -sf /etc/systemd/system/bootstrap.service /mnt/loop0p2/etc/systemd/system/multi-user.target.wants/bootstrap.service
 
-echo "=========== Auto-creating pi user with default password (raspberry)..."
-# The creation of the pi user will be done on first boot
-[ ! -f /mnt/loop0/userconf.txt ] && echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee /mnt/loop0/userconf.txt > /dev/null
+echo "=========== Copy of bootstrap.sh to root filesystem..."
+# We place it in the rootfs for the first execution
+sudo cp bootstrap.sh /mnt/loop0p2/usr/lib/raspi-config/ || echo "ERROR Copying bootstrap.sh to root partition!"
+sudo chmod +x /mnt/loop0p2/usr/lib/raspi-config/bootstrap.sh || echo "ERROR Ajusting exec permission to bootstrap.sh!"
 
-echo "=========== Unmounting boot partition..."
-sudo umount /mnt/loop0 || echo "ERROR Unmounting partition #1!"
-sudo rmdir /mnt/loop0
+echo "=========== Enabling persistent journald logging..."
+# For debugging and review purpose
+sudo sed -i "s/^#\{0,1\}Storage=.*$/Storage=persistent/g" /mnt/loop0p2/etc/systemd/journald.conf
+
+echo "=========== Unmounting the root filesystem..."
+# Unmount the root filesystem
+sudo umount /dev/loop0p2
+
+# Detaching loop devices
+sudo partx -dv /dev/loop0 && echo "Detaching loop devices OK"
+
+# Mount points removing
+sudo rmdir /mnt/loop0p1 /mnt/loop0p2 /mnt/loop0p3
+# -----------------------------
 
 # Add _Prepped suffix to image file
 mv $IMGFILE ${IMGFILE%.img}_Prepped.img
