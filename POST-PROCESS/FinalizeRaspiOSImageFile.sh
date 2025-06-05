@@ -17,7 +17,23 @@
 
 # TO BE UPDATED - TO BE UPDATED - TO BE UPDATED - TO BE UPDATED - TO BE UPDATED -TO BE UPDATED -
 
+CFGURL=https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/_staging
+CFGFILENAME=Config.ExportPublicImage.cfg
+
 SRCIMG=SDCard_Imaged.img
+
+# We re-fetch the config file and parse it
+wget $CFGURL/$CFGFILENAME
+# Load config file settings for effective cleanup...
+if [ -f $CFGFILENAME ]; then
+  while IFS="= " read VAR VALUE; do
+    [ ! -z $VAR ] && [ "${VAR:0:1}" != "#" ] && export $VAR="$VALUE"
+  done < $CFGFILENAME
+  rm -f $CFGFILENAME
+else
+  echo "Config file ($CFGFILENAME) was not found! Fatal error, end of script."
+  exit
+fi
 
 # Image back the SD card to an image file
 echo "Please put the SD card in the  slot and press a key when done..."
@@ -65,7 +81,7 @@ sudo mkdir /mnt/loop0
 sudo mount /dev/loop0 /mnt/loop0
 
 # Jump into the data filesystem and remove test ROM and related files, if present
-find /mnt/loop0/mame -type f -name gunsmoke.* | xargs rm
+[ ! -z $TestGame ] && find /mnt/loop0/mame -type f -name $TestGame.* | xargs rm
 
 # Cleanup traces of MAME ROM tests
 sudo sed -i 's/last_used_machine.*$/last_used_machine          /g' /mnt/loop0/mame/ini/ui.ini
