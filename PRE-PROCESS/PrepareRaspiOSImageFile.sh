@@ -147,7 +147,7 @@ echo "=========== Mounting the root filesystem..."
 sudo mount /dev/mapper/${LOOPDEV}p2 /mnt/ImageP2 || echo "Mounting of rootfs FAILED"
 
 # We fetch bootstrap.sh from the Github repo...
-[ ! -f bootstrap.sh ] && wget https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/PRE-PROCESS/bootstrap.sh
+[ ! -f bootstrap.sh ] && wget -q https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/PRE-PROCESS/bootstrap.sh
 
 if [ ! -f bootstrap.sh ]; then
   echo "Error downloading bootstrap.sh from the Github repo!"
@@ -155,7 +155,7 @@ if [ ! -f bootstrap.sh ]; then
 fi
 
 echo "=========== Installing bootstrap.service unit file for Systemd..."
-[ ! -f bootstrap.service ] && wget https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/PRE-PROCESS/bootstrap.service
+[ ! -f bootstrap.service ] && wget -q https://raw.githubusercontent.com/sonicprod/raspi-mame-appliance/refs/heads/main/PRE-PROCESS/bootstrap.service
 
 sudo chmod 644 ./bootstrap.service || echo "ERROR Ajusting exec permission to bootstrap.service"
 sudo mv bootstrap.service /mnt/ImageP2/etc/systemd/system/
@@ -163,9 +163,9 @@ sudo mv bootstrap.service /mnt/ImageP2/etc/systemd/system/
 # Enable unit by symlinking
 sudo ln -sf /etc/systemd/system/bootstrap.service /mnt/ImageP2/etc/systemd/system/multi-user.target.wants/bootstrap.service
 
-echo "=========== Copy of bootstrap.sh to root filesystem..."
+echo "=========== Moving bootstrap.sh to root filesystem..."
 # We place it in the rootfs for the first execution
-sudo cp bootstrap.sh /mnt/ImageP2/usr/lib/raspi-config/ || echo "ERROR Copying bootstrap.sh to root partition!"
+sudo mv bootstrap.sh /mnt/ImageP2/usr/lib/raspi-config/ || echo "ERROR Moving bootstrap.sh to root partition!"
 sudo chmod +x /mnt/ImageP2/usr/lib/raspi-config/bootstrap.sh || echo "ERROR Ajusting exec permission to bootstrap.sh!"
 
 echo "=========== Enabling persistent journald logging..."
