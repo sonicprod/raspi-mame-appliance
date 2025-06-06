@@ -13,14 +13,8 @@
 #   - Install bootstrap.service Systemd unit file and script (bootstrap.sh) so the process can start automatically at first boot
 #   - Optionnaly write the prepped disk image to a physical SD Card
 
-IMGFILE=$(find . -maxdepth 1 -type f -name '20*.img.xz' -printf '%P\n' -quit)
 FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
 REEPOBASEURL=https://github.com/sonicprod/raspi-mame-appliance
-
-if [ -n $IMGFILE ] && [ -f "$IMGFILE" ]; then
-  echo "$IMGFILE already exist (already processed), aborting..."
-  exit
-fi
 
 # Ask for sudo password at the beginning of the script so it can run uninterrupted
 sudo echo -n
@@ -28,25 +22,31 @@ sudo echo -n
 # Remove pre-existing prepped image, if exist
 rm -f *_Prepped.img
 
-echo "=========== Downloading the latest RaspiOS Lite arm64..."
+# We cache the downloaded Raspberry Pi OS image, so we avoid re-downloading it each time we execute this script
+[ ! -d ./cache ] && mkdir cache
+
+# Look at the server, so we get the latest image filename
+RASPIOSFILE=$(wget -q -S --spider https://downloads.raspberrypi.org/raspios_lite_arm64_latest 2>&1 | awk '/location:/ {print $2}')
+RASPIOSFILE=${RASPIOSFILE##*/}
+
 # Get the latest RaspiOS Lite for arm64
-wget --trust-server-names $FETCHURL
+echo -n "=========== Fetching the latest RaspiOS Lite arm64..."
+# If not already in cache, let's download it to cache folder
+[ ! -f ./cache/$RASPIOSFILE ] && (rm -f ./cache/*.xz && wget -q --trust-server-names $FETCHURL -P ./cache && echo " Download OK") || echo " Found latest compressed image in cache"
 
-IMGFILE=$(find . -maxdepth 1 -type f -ctime -1 -name '20*.img.xz' -printf '%P\n' -quit)
-
-if [ ! -f "$IMGFILE" ]; then
-  echo "$IMGFILE does not exist, aborting..."
+if [ ! -f "./cache/$RASPIOSFILE" ]; then
+  echo "$RASPIOSFILE does not exist, aborting..."
   exit
 fi
 
 echo -n "=========== Extracting the compressed image file..."
-# Decompress the archive
-[ -f ${IMGFILE%.*} ] && rm ${IMGFILE%.*}
-unxz $IMGFILE
-echo
-
-# Remove the .xz extension
-IMGFILE=${IMGFILE%.*}
+# Decompress the archive - we keep the archive (-k option)
+unxz -k ./cache/$RASPIOSFILE
+# Move extracted .img to current working directory
+# Remove the .xz extension from variable
+IMGFILE=${RASPIOSFILE%.*}
+mv ./cache/$IMGFILE .
+echo " Completed"
 
 # We detach from all previous attach, if any
 sudo losetup -D
