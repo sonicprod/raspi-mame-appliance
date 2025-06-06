@@ -70,7 +70,6 @@ echo "=========== Auto-creating pi user with default password (raspberry)..."
 # ----------------------- Done with the boot partition -----------------------
 echo "=========== Unmounting boot partition..."
 sudo umount /mnt/loop0p1 || echo "ERROR Unmounting partition #1 !"
-sudo rmdir /mnt/loop0p1
 
 # ----------------------- Do something with the rootfs partition -----------------------
 # We free the image from the devices, we need to expand it for P2
