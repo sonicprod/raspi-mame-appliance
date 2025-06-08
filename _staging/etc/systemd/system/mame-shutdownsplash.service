@@ -8,6 +8,8 @@ Conflicts=mame-bootsplash.service
 Type=simple
 ExecStart=/usr/bin/fim -q --no-history /home/pi/splash/mame-shutdown.jpg
 SuccessExitStatus=42
+TTYPath=/dev/console
+StandardOutput=tty
 
 [Install]
 WantedBy=reboot.target halt.target poweroff.target
