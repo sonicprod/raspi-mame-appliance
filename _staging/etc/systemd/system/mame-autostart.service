@@ -10,14 +10,11 @@ ConditionPathExists=/home/pi/settings
 User=pi
 Group=pi
 PAMName=login
-Type=oneshot
+Type=simple
 EnvironmentFile=/home/pi/settings
 ExecStart=/home/pi/scripts/autostart.sh
 Restart=on-abort
 RestartSec=5
-TTYPath=/dev/console
-StandardInput=tty
-StandardOutput=tty
 
 [Install]
 WantedBy=multi-user.target
