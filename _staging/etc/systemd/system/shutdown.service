@@ -3,7 +3,11 @@ Description=Shutdown and poweroff service
 After=mame-autostart.service
 
 [Service]
+Type=oneshot
 ExecStart=/sbin/poweroff
+TTYPath=/dev/tty1
+StandardInput=tty
+
 
 [Install]
 WantedBy=multi-user.target
