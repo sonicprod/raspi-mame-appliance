@@ -17,7 +17,6 @@ Restart=on-abort
 RestartSec=5
 TTYPath=/dev/tty1
 StandardInput=tty
-StandardOutput=tty
 
 [Install]
 WantedBy=multi-user.target
