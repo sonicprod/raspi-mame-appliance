@@ -7,7 +7,6 @@ After=local-fs.target
 Type=simple
 ExecStart=/usr/bin/fim -q --no-history /home/pi/splash/mame-boot.jpg
 SuccessExitStatus=42
-TTYPath=/dev/tty1
 StandardInput=tty
 StandardOutput=tty
 
