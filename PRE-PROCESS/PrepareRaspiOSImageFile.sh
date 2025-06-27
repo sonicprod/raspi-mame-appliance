@@ -223,8 +223,9 @@ while true; do
 
     echo
     echo "Are you sure to write the image file to /dev/$DEVICE disk device?"
-    read -p "Please answer by yes or no : " yn
-    case ${yn,,} in
+    echo -n "Please answer by yes or no : "
+    YN=$(sed 1q)
+    case ${YN,,} in
         y | yes) break;;
         n | no)  ;;
         *) echo "Please answer by yes or no.";;
