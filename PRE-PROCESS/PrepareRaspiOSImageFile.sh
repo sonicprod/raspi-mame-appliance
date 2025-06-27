@@ -17,6 +17,7 @@ FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
 REEPOBASEURL=https://github.com/sonicprod/raspi-mame-appliance
 
 echo "=========== Raspberry Pi MAME Appliance | Initial offline Pre-Process of the Raspberry Pi OS Lite image file =========="
+echo "Test Flag"
 echo
 echo "=========== Please enter the sudo password, so the script won't be halted when elevated provileges are needed."
 # Ask for sudo password at the beginning of the script so it can run uninterrupted
