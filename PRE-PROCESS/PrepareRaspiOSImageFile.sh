@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-06-27
+# Updated: 2025-06-30
 # Author: Benoit Bégin
 # 
 # This script:
@@ -12,6 +12,23 @@
 #   - Auto-creating pi user with default password (raspberry)
 #   - Install bootstrap.service Systemd unit file and script (bootstrap.sh) so the process can start automatically at first boot
 #   - Optionnaly write the prepped disk image to a physical SD Card
+
+
+yes_no_prompt() {
+    echo -n "Please answer by [Y]es or [N]o : "
+    set -- $(locale LC_MESSAGES)
+    old_stty_cfg=$(stty -g)
+    stty raw -echo
+    YN=$( while ! head -c 1 | grep "[YyNn]"; do true; done )
+    stty $old_stty_cfg
+    if [ ${YN,,} = 'y' ]; then
+        echo Yes
+        return 0
+    else
+        echo No
+        return 1
+    fi
+}
 
 FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
 REEPOBASEURL=https://github.com/sonicprod/raspi-mame-appliance
@@ -199,14 +216,7 @@ echo "     Would you like to write the image file to an SD Card?"
 echo
 echo "      You can now plug your SD Card, if not already done."
 echo ---------------------------------------------------------------------
-while true; do
-    read -p "Please answer by yes or no : " yn
-    case ${yn,,} in
-        y | yes) break;;
-        n | no)  exit;;
-        *) echo "Please answer by yes or no.";;
-    esac
-done
+yesno_prompt && break || exit
 
 while true; do
     echo; echo
@@ -223,12 +233,7 @@ while true; do
 
     echo
     echo "Are you sure to write the image file to /dev/$DEVICE disk device?"
-    read -r -p "Please answer by yes or no : " YN
-    case ${YN,,} in
-        y | yes) break;;
-        n | no)  ;;
-        *) echo "Please answer by yes or no.";;
-    esac
+    yesno_prompt && break
 done
 
 # Unmount all mounted partitions of $DEVICE
