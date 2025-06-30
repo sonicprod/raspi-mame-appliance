@@ -216,7 +216,7 @@ echo "     Would you like to write the image file to an SD Card?"
 echo
 echo "      You can now plug your SD Card, if not already done."
 echo ---------------------------------------------------------------------
-yesno_prompt && break || exit
+yes_no_prompt && break || exit
 
 while true; do
     echo; echo
@@ -233,7 +233,7 @@ while true; do
 
     echo
     echo "Are you sure to write the image file to /dev/$DEVICE disk device?"
-    yesno_prompt && break
+    yes_no_prompt && break
 done
 
 # Unmount all mounted partitions of $DEVICE
