@@ -20,12 +20,15 @@ yes_no_prompt() {
         case ${yn,,} in
           y)
             echo Yes
+            return 0
             break;;
           n)
             echo No
+            return 1
             break;;
           $'\e')  # ESC key = Abort
             echo Abort
+            return 2
             break;;
         esac
     done
