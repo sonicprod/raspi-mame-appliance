@@ -13,21 +13,22 @@
 #   - Install bootstrap.service Systemd unit file and script (bootstrap.sh) so the process can start automatically at first boot
 #   - Optionnaly write the prepped disk image to a physical SD Card
 
-
 yes_no_prompt() {
     echo -n "Please answer by [Y]es or [N]o : "
-    set -- $(locale LC_MESSAGES)
-    old_stty_cfg=$(stty -g)
-    stty raw -echo
-    YN=$( while ! head -c 1 | grep "[YyNn]"; do true; done )
-    stty $old_stty_cfg
-    if [ ${YN,,} = 'y' ]; then
-        echo Yes
-        return 0
-    else
-        echo No
-        return 1
-    fi
+    while true; do
+      read -sn 1 yn </dev/tty
+        case ${yn,,} in
+          y)
+            echo Yes
+            break;;
+          n)
+            echo No
+            break;;
+          $'\e')  # ESC key = Abort
+            echo Abort
+            break;;
+        esac
+    done
 }
 
 FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
