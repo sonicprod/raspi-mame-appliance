@@ -220,13 +220,13 @@ echo "     Would you like to write the image file to an SD Card?"
 echo
 echo "      You can now plug your SD Card, if not already done."
 echo ---------------------------------------------------------------------
-yes_no_prompt && break || exit
+yes_no_prompt || exit
 
 while true; do
     echo; echo
     lsblk -f
     echo
-    read -p "Please input the DISK device (just the name, without the /dev prefix) to write to: " DEVICE
+    read -p "Please input the DISK device (just the name, without the /dev prefix) to write to: " DEVICE </dev/tty
     echo
     if [ -z $DEVICE ]; then
       echo "Aborting..."
