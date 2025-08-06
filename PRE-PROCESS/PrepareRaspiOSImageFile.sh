@@ -232,6 +232,8 @@ while true; do
       echo "Aborting..."
       exit
     fi
+    # Convert input to lowercase
+    DEVICE=${DEVICE,,}
     # Remove /dev/ prefix, if exist
     DEVICE=${DEVICE#/dev/}
     [ $(findmnt / -no source | grep /dev/$DEVICE) ] && echo "!!! WARNING !!! - The root / filesystem is mounted on this DISK (/dev/$DEVICE)!"
