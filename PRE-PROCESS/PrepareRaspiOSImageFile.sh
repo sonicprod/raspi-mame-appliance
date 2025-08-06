@@ -14,7 +14,7 @@
 #   - Optionnaly write the prepped disk image to a physical SD Card
 
 yes_no_prompt() {
-    echo -n "Please answer by [Y]es or [N]o : "
+    echo -n '(ESC to Abort) Please answer by [Y]es or [N]o : '
     while true; do
       read -sn 1 yn </dev/tty
         case ${yn,,} in
@@ -28,8 +28,8 @@ yes_no_prompt() {
             break;;
           $'\e')  # ESC key = Abort
             echo Abort
-            return 2
-            break;;
+            exit 0
+            # return 2
         esac
     done
 }
