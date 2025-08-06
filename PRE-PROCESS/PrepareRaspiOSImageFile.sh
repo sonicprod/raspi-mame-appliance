@@ -241,7 +241,8 @@ while true; do
       echo "Are you sure to write the image file to /dev/$DEVICE disk device?"
       yes_no_prompt && break
     else
-      echo "This device (/dev/$DEVICE) does not seems to exist!"
+      echo -n "This device (/dev/$DEVICE) does not seems to exist!"
+      sleep 2; echo
     fi
 done
 
