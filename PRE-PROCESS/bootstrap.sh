@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-06-02
+# Updated: 2025-08-06
 # Author: Benoit Bégin
 # 
 # This is the "bootstrap" script that chain the "offline" preparation of the image and
@@ -92,5 +92,9 @@ echo "If error-free, this system is now ready to be imaged to a .img file."
 echo
 echo
 echo "                     End of online automation..."
+
+echo "=========== Disabling persistent journald logging..."
+sudo sed -i "s/^#\{0,1\}Storage=persistent$/#Storage=/g" /mnt/ImageP2/etc/systemd/journald.conf
+
 
 
