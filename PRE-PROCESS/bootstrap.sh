@@ -94,7 +94,7 @@ echo
 echo "                     End of online automation..."
 
 echo "=========== Disabling persistent journald logging..."
-sudo sed -i "s/^#\{0,1\}Storage=persistent$/#Storage=/g" /mnt/ImageP2/etc/systemd/journald.conf
+sudo sed -i "s/^#\{0,1\}Storage=persistent$/#Storage=/g" /etc/systemd/journald.conf
 
 
 
