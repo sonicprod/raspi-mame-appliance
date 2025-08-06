@@ -232,12 +232,17 @@ while true; do
       echo "Aborting..."
       exit
     fi
-
+    # Remove /dev/ prefix, if exist
+    DEVICE=${DEVICE#/dev/}
     [ $(findmnt / -no source | grep /dev/$DEVICE) ] && echo "!!! WARNING !!! - The root / filesystem is mounted on this DISK (/dev/$DEVICE)!"
 
     echo
-    echo "Are you sure to write the image file to /dev/$DEVICE disk device?"
-    yes_no_prompt && break
+    if [ -e /dev/$DEVICE ]; then
+      echo "Are you sure to write the image file to /dev/$DEVICE disk device?"
+      yes_no_prompt && break
+    else
+      echo "This device (/dev/$DEVICE) does not seems to exist!"
+    fi
 done
 
 # Unmount all mounted partitions of $DEVICE
