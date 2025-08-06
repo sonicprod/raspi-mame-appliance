@@ -29,7 +29,6 @@ yes_no_prompt() {
           $'\e')  # ESC key = Abort
             echo Abort
             exit 0
-            # return 2
         esac
     done
 }
