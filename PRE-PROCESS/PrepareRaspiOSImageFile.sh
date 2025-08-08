@@ -34,7 +34,7 @@ yes_no_prompt() {
 }
 
 FETCHURL=https://downloads.raspberrypi.org/raspios_lite_arm64_latest
-REEPOBASEURL=https://github.com/sonicprod/raspi-mame-appliance
+REPOBASEURL=https://github.com/sonicprod/raspi-mame-appliance
 
 echo "=========== Raspberry Pi MAME Appliance | Initial offline Pre-Process of the Raspberry Pi OS Lite image file =========="
 echo
