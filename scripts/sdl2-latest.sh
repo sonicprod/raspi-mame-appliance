@@ -2,7 +2,7 @@
 
 # This script build the latest SDL2 version without X11 dependency.
 
-SDLVERSION=2.32.4
+SDLVERSION=2.32.8
 TTFVERSION=2.24.0
 MIXERVERSION=2.8.1
 
