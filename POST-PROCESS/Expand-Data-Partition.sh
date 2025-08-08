@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-06-02
+# Updated: 2025-08-08
 # Author: Benoit Bégin
 # 
 # This script will expand /dev/mmcblk0p3 partition (data) to all the available space on the storage device.
@@ -25,7 +25,7 @@ echo End execution of: Expand-Data-Partition.sh
 echo ---------------------------------------------
 
 # We remove ourself to prevent any re-run
-rm /etc/systemd/system//multi-user.target.wants/first-run.service
+rm /etc/systemd/system/multi-user.target.wants/first-run.service
 rm /etc/systemd/system/first-run.service
 rm /usr/lib/raspi-config/Expand-Data-Partition.sh
 reboot
