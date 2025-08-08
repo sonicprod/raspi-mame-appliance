@@ -1,5 +1,5 @@
 #!/bin/bash
-# Updated: 2025-06-04
+# Updated: 2025-08-08
 # Author: Benoit Bégin
 
 # This script:
@@ -74,8 +74,10 @@ cd /mnt/loop0/home/pi
 MAMEVER=$(find . -maxdepth 1 -type d -name "mame*" -printf '%P\n' -quit)
 MAMEVER=${MAMEVER#mame}
 
+echo "=========== Disabling persistent journald logging..."
+sudo sed -i "s/^#\{0,1\}Storage=persistent$/#Storage=/g" /mnt/loop0/etc/systemd/journald.conf
 # Flush ALL journalctl entries
-sudo rm -R /var/log/journal/*
+sudo rm -R /mnt/loop0/var/log/journal/*
 
 # Flush history data
 cd /mnt/loop0/home/pi
