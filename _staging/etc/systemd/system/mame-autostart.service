@@ -2,7 +2,7 @@
 Description=MAME Appliance Autostart service
 Conflicts=getty@tty1.service smbd.service nmbd.service cron.service mame-artwork-mgmt.service
 Requires=local-fs.target
-Before=smbd.service shutdown.service
+Before=smbd.service mame-artwork-mgmt.service shutdown.service
 After=local-fs.target
 ConditionPathExists=/home/pi/settings
 
