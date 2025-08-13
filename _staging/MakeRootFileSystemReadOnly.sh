@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-08-12
+# Updated: 2025-08-13
 # Author: Benoit Bégin
 #
 # This script:
@@ -36,8 +36,8 @@ sudo apt-get install busybox-syslogd -y
 sudo apt-get remove --purge rsyslog -y
 # From now on, use sudo logread to check your system logs.
 
-# /etc/fstab: Add read-only mode to /boot or /boot/firmware filesystems
-sudo sed -i "/$BOOTDIRESC/{/ro/!s/\S\S*/&,ro/4}" /etc/fstab
+# /etc/fstab: Add read-only mode to /boot/firmware filesystem
+sudo sed -i '/\S\s\s*\/boot\/firmware\s\s*/{/\(ro,\|,ro\)/!s/\S\S*/&,ro/4}' /etc/fstab
 
 # /etc/fstab: Add read-only mode to / root filesystem
 sudo sed -i '/\S\s\s*\/\s\s*/{/\(ro,\|,ro\)/!s/\S\S*/&,ro/4}' /etc/fstab
