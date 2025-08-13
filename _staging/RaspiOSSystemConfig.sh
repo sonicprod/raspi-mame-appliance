@@ -94,6 +94,7 @@ if [ $DisableWiFi == "True" ]; then
   grep -q "dtoverlay=disable-wifi" $BOOTMNT/config.txt || sudo tee -a $BOOTMNT/config.txt << 'EOF'
 # Turns off WiFi (for those who use Ethernet only)
 dtoverlay=disable-wifi
+
 EOF
   # Désactiver WPA Supplicant et RFKill (liés au Wi-Fi)...
   sudo apt-get remove wpasupplicant rfkill -y
@@ -103,6 +104,7 @@ if [ $DisableBluetooth == "True" ]; then
     grep -q "dtoverlay=disable-bt" $BOOTMNT/config.txt || sudo tee -a $BOOTMNT/config.txt << 'EOF'
 # Turns off Bluetooth
 dtoverlay=disable-bt
+
 EOF
   # Retrait des paquets liés à Bluetooth...
   sudo apt-get remove bluez pi-bluetooth -y
