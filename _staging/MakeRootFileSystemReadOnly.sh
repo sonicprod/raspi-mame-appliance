@@ -9,9 +9,9 @@
 #              https://www.dzombak.com/blog/2024/03/running-a-raspberry-pi-with-a-read-only-root-filesystem/
 
 BOOTDIR=$(findmnt /dev/mmcblk0p1 -n -o TARGET)
-[ $BOOTDIR ] && BOOTDIR=${BOOTDIR//\//\\/} || exit
+[ $BOOTDIR ] && BOOTDIRESC=${BOOTDIR//\//\\/} || exit
 # Check /etc/fstab to see if this script has already been executed
-awk "/\/ /{print $4}" /etc/fstab | grep -q ro, && awk "/$BOOTDIR/{print $4}" /etc/fstab | grep -q ro, && echo 'This script has already been executed and your system is already in read-only mode.' && exit
+awk "/\/ /{print $4}" /etc/fstab | grep -q ro, && awk "/$BOOTDIRESC/{print $4}" /etc/fstab | grep -q ro, && echo 'This script has already been executed and your system is already in read-only mode.' && exit
 
 echo ---------------------------------------------------------------------
 echo This script will convert this system in read-only mode.
@@ -37,7 +37,7 @@ sudo apt-get remove --purge rsyslog -y
 # From now on, use sudo logread to check your system logs.
 
 # /etc/fstab: Add read-only mode to /boot or /boot/firmware filesystems
-sudo sed -i "/$BOOTDIR/{/ro/!s/\S\S*/&,ro/4}" /etc/fstab
+sudo sed -i "/$BOOTDIRESC/{/ro/!s/\S\S*/&,ro/4}" /etc/fstab
 
 # /etc/fstab: Add read-only mode to / root filesystem
 sudo sed -i '/\S\s\s*\/\s\s*/{/\(ro,\|,ro\)/!s/\S\S*/&,ro/4}' /etc/fstab
@@ -142,9 +142,12 @@ echo 'PrivateTmp=no' | sudo tee -a /etc/systemd/system/systemd-timesyncd.service
 echo 'RestartSec=5' | sudo tee -a /etc/systemd/system/systemd-timesyncd.service.d/readonlyfs-fixup.conf
 
 # Disable auto-update daemons
-sudo systemctl stop    systemd-tmpfiles-clean.timer apt-daily.timer apt-daily-upgrade.timer man-db.timer systemd-tmpfiles-clean.service apt-daily-upgrade.service
-sudo systemctl disable systemd-tmpfiles-clean.timer apt-daily.timer apt-daily-upgrade.timer man-db.timer systemd-tmpfiles-clean.service apt-daily-upgrade.service
-sudo systemctl mask    systemd-tmpfiles-clean.timer apt-daily.timer apt-daily-upgrade.timer man-db.timer systemd-tmpfiles-clean.service apt-daily-upgrade.service
+for c in stop disable mask; do
+  sudo systemctl $c systemd-tmpfiles-clean.timer \
+       apt-daily.timer apt-daily-upgrade.timer \
+       man-db.timer systemd-tmpfiles-clean.service \
+       apt-daily-upgrade.service
+done
 
 # Systemd daemon reload to update changes
 sudo systemctl daemon-reload
