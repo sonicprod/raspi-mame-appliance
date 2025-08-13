@@ -1,7 +1,12 @@
 #!/bin/bash
 
-# This script put the root (/) and /boot or /boot/firmware filesystems in read-only mode.
-# Based on: https://medium.com/swlh/make-your-raspberry-pi-file-system-read-only-raspbian-buster-c558694de79
+# Updated: 2025-08-12
+# Author: Benoit Bégin
+#
+# This script:
+#  - Put the root (/) and /boot or /boot/firmware filesystems in read-only mode.
+#    Based on: https://medium.com/swlh/make-your-raspberry-pi-file-system-read-only-raspbian-buster-c558694de79
+#              https://www.dzombak.com/blog/2024/03/running-a-raspberry-pi-with-a-read-only-root-filesystem/
 
 BOOTDIR=$(findmnt /dev/mmcblk0p1 -n -o TARGET)
 [ $BOOTDIR ] && BOOTDIR=${BOOTDIR//\//\\/} || exit
@@ -13,14 +18,6 @@ echo This script will convert this system in read-only mode.
 echo
 echo The system will be automatically rebooted, once the script complete.
 echo ---------------------------------------------------------------------
-while true; do
-    read -p "Do you wish to continue? " yn
-    case ${yn,,} in
-        y | yes) break;;
-        n | no)  exit;;
-        *) echo "Please answer yes or no.";;
-    esac
-done
 
 # START
 echo ---------------------------------------------------------------------
@@ -112,9 +109,7 @@ sudo rm -R /var/lib/systemd/timesync/*
 sudo rm -R /var/log/*
 
 # Systemd drop-ins for read-only mode ajustments
-for i in raspberrypi-net-mods.service \
-         systemd-rfkill \
-         sshswitch.service \
+for i in sshswitch.service \
          rpi-eeprom-update.service
 do
   if [ ! $(systemctl -q is-enabled $i) ]; then
