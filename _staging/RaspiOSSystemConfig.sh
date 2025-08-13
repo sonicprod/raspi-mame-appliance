@@ -1,6 +1,6 @@
 #/bin/bash
 
-# Updated: 2025-06-03
+# Updated: 2025-08-12
 # Author: Benoit Bégin
 # 
 # This script configure base system-wide OS settings
@@ -95,8 +95,8 @@ if [ $DisableWiFi == "True" ]; then
 # Turns off WiFi (for those who use Ethernet only)
 dtoverlay=disable-wifi
 EOF
-  # Désactiver WPA Supplicant (lié au Wi-Fi)...
-  sudo apt-get remove wpasupplicant -y
+  # Désactiver WPA Supplicant et RFKill (liés au Wi-Fi)...
+  sudo apt-get remove wpasupplicant rfkill -y
 fi
 
 if [ $DisableBluetooth == "True" ]; then
