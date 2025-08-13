@@ -144,7 +144,7 @@ echo 'RestartSec=5' | sudo tee -a /etc/systemd/system/systemd-timesyncd.service.
 # Disable auto-update daemons
 sudo systemctl stop    systemd-tmpfiles-clean.timer apt-daily.timer apt-daily-upgrade.timer man-db.timer systemd-tmpfiles-clean.service apt-daily-upgrade.service
 sudo systemctl disable systemd-tmpfiles-clean.timer apt-daily.timer apt-daily-upgrade.timer man-db.timer systemd-tmpfiles-clean.service apt-daily-upgrade.service
-sudo systemctl mask    systemd-tmpfiles-clean.timer systemd-tmpfiles-clean.service apt-daily-upgrade.service
+sudo systemctl mask    systemd-tmpfiles-clean.timer apt-daily.timer apt-daily-upgrade.timer man-db.timer systemd-tmpfiles-clean.service apt-daily-upgrade.service
 
 # Systemd daemon reload to update changes
 sudo systemctl daemon-reload
