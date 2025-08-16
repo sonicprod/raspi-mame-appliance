@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-08-13
+# Updated: 2025-08-16
 # Author: Benoit Bégin
 #
 # This script:
@@ -9,9 +9,13 @@
 #              https://www.dzombak.com/blog/2024/03/running-a-raspberry-pi-with-a-read-only-root-filesystem/
 
 BOOTDIR=$(findmnt /dev/mmcblk0p1 -n -o TARGET)
-[ $BOOTDIR ] && BOOTDIRESC=${BOOTDIR//\//\\/} || exit
+DEBIANVER=$(lsb_release -sr)
+
+# Check Debian version to make sure the configuration changes are valid and effective
+[ "$BOOTDIR" != "/boot/firmware" ] && [ $DEBIANVER -lt 12 ] && echo 'This script is tailored for Debian 12/Bookworm and up. Aborting...' && exit
+
 # Check /etc/fstab to see if this script has already been executed
-awk "/\/ /{print $4}" /etc/fstab | grep -q ro, && awk "/$BOOTDIRESC/{print $4}" /etc/fstab | grep -q ro, && echo 'This script has already been executed and your system is already in read-only mode.' && exit
+awk "/\/ /{print $4}" /etc/fstab | grep -q ro, && awk "/\/boot\/firmware/{print $4}" /etc/fstab | grep -q ro, && echo 'This script has already been executed and your system is already in read-only mode.' && exit
 
 echo ---------------------------------------------------------------------
 echo This script will convert this system in read-only mode.
@@ -29,7 +33,7 @@ sudo apt-get remove --purge triggerhappy logrotate dphys-swapfile -y
 sudo apt-get autoremove --purge -y
 
 # Disable swap and filesystem check and set it to read-only
-sudo sed -ie 's/^console=serial0,115200.*$/& fsck.mode=skip noswap ro/g' $BOOTDIR/cmdline.txt
+sudo sed -ie 's/^console=serial0,115200.*$/& fsck.mode=skip noswap ro/g' /boot/firmware/cmdline.txt
 
 # Replace your log manager
 sudo apt-get install busybox-syslogd -y
@@ -82,8 +86,8 @@ set_bash_prompt() {
     PS1='\[\033[01;32m\]\u@\h${fs_mode:+($fs_mode)}\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
     }
 
-alias ro="sudo mount -o remount,ro / ; sudo mount -o remount,ro $BOOTDIR"
-alias rw="sudo mount -o remount,rw / ; sudo mount -o remount,rw $BOOTDIR"
+alias ro="sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot/firmware"
+alias rw="sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot/firmware"
 
 PROMPT_COMMAND=set_bash_prompt
 
@@ -91,7 +95,7 @@ EOF
 
 # To make sure the file system goes back to read-only once you log out
 grep -q "sudo mount -o remount,ro /"     /etc/bash.bash_logout || echo 'sudo mount -o remount,ro /' | sudo tee -a /etc/bash.bash_logout
-grep -q "sudo mount -o remount,ro $BOOTDIR" /etc/bash.bash_logout || echo 'sudo mount -o remount,ro $BOOTDIR' | sudo tee -a /etc/bash.bash_logout
+grep -q "sudo mount -o remount,ro /boot/firmware" /etc/bash.bash_logout || echo 'sudo mount -o remount,ro /boot/firmware' | sudo tee -a /etc/bash.bash_logout
 
 # Alias ajustments
 sed -ie "s/^alias arcademode=.*$/alias arcademode=\'rw; sudo systemctl enable mame-autostart.service; ro\'/g" ~/.bash_aliases
@@ -119,8 +123,8 @@ do
     else
       echo '[Service]' | sudo tee -a /etc/systemd/system/$i.d/readonlyfs-fixup.conf
     fi
-    echo "ExecStartPre=/bin/sh  -c \"mount -o remount,rw $BOOTDIR; mount -o remount,rw /\"" | sudo tee -a /etc/systemd/system/$i.d/readonlyfs-fixup.conf
-    echo "ExecStartPost=/bin/sh -c \"mount -o remount,ro $BOOTDIR; mount -o remount,ro /\"" | sudo tee -a /etc/systemd/system/$i.d/readonlyfs-fixup.conf
+    echo "ExecStartPre=/bin/sh  -c \"mount -o remount,rw /boot/firmware; mount -o remount,rw /\"" | sudo tee -a /etc/systemd/system/$i.d/readonlyfs-fixup.conf
+    echo "ExecStartPost=/bin/sh -c \"mount -o remount,ro /boot/firmware; mount -o remount,ro /\"" | sudo tee -a /etc/systemd/system/$i.d/readonlyfs-fixup.conf
   fi
 done
 
