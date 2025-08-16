@@ -12,7 +12,10 @@ BOOTDIR=$(findmnt /dev/mmcblk0p1 -n -o TARGET)
 DEBIANVER=$(lsb_release -sr)
 
 # Check Debian version to make sure the configuration changes are valid and effective
-[ "$BOOTDIR" != "/boot/firmware" ] && [ $DEBIANVER -lt 12 ] && echo 'This script is tailored for Debian 12/Bookworm and up. Aborting...' && exit
+if [ "$BOOTDIR" != "/boot/firmware" ] || [ $DEBIANVER -lt 12 ]; then
+  echo 'This script is tailored for Debian 12/Bookworm and up. Aborting...'
+  exit
+fi
 
 # Check /etc/fstab to see if this script has already been executed
 awk "/\/ /{print $4}" /etc/fstab | grep -q ro, && awk "/\/boot\/firmware/{print $4}" /etc/fstab | grep -q ro, && echo 'This script has already been executed and your system is already in read-only mode.' && exit
