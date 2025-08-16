@@ -146,11 +146,11 @@ echo 'PrivateTmp=no' | sudo tee -a /etc/systemd/system/systemd-timesyncd.service
 echo 'RestartSec=5' | sudo tee -a /etc/systemd/system/systemd-timesyncd.service.d/readonlyfs-fixup.conf
 
 # Disable auto-update daemons
-for c in stop disable mask; do
-  sudo systemctl $c systemd-tmpfiles-clean.timer \
-       apt-daily.timer apt-daily-upgrade.timer \
-       man-db.timer systemd-tmpfiles-clean.service \
-       apt-daily-upgrade.service
+for CMD in stop disable mask; do
+  sudo systemctl $CMD systemd-tmpfiles-clean.timer \
+                      apt-daily.timer apt-daily-upgrade.timer \
+                      man-db.timer systemd-tmpfiles-clean.service \
+                      apt-daily-upgrade.service
 done
 
 # Systemd daemon reload to update changes
