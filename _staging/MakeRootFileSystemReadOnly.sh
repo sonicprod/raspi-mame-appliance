@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-08-16
+# Updated: 2025-08-19
 # Author: Benoit Bégin
 #
 # This script:
@@ -18,7 +18,8 @@ if [ "$BOOTDIR" != "/boot/firmware" ] || [ $DEBIANVER -lt 12 ]; then
 fi
 
 # Check /etc/fstab to see if this script has already been executed
-awk "/\/ /{print $4}" /etc/fstab | grep -q ro, && awk "/\/boot\/firmware/{print $4}" /etc/fstab | grep -q ro, && echo 'This script has already been executed and your system is already in read-only mode.' && exit
+ROOTOPTS=$(awk '$1 !~ /^#/ && $2 == "/" && $4 ~ /(^|,)ro(,|$)/ {print $4}' /etc/fstab)
+[ ! -z $ROOTOPTS ] && for i in ${ROOTOPTS//,/ }; do [ "$i" = "ro" ] && echo 'This script has already been executed and your system is already in read-only mode.' && exit ; done
 
 echo ---------------------------------------------------------------------
 echo This script will convert this system in read-only mode.
