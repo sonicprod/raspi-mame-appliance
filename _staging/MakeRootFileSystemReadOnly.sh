@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-08-19
+# Updated: 2025-08-22
 # Author: Benoit Bégin
 #
 # This script:
@@ -19,7 +19,7 @@ fi
 
 # Check /etc/fstab to see if this script has already been executed
 ROOTOPTS=$(awk '$1 !~ /^#/ && $2 == "/" && $4 ~ /(^|,)ro(,|$)/ {print $4}' /etc/fstab)
-[ ! -z $ROOTOPTS ] && for i in ${ROOTOPTS//,/ }; do [ "$i" = "ro" ] && echo 'This script has already been executed and your system is already in read-only mode.' && exit ; done
+[ ! -z $ROOTOPTS ] && echo 'This script has already been executed and your system is already in read-only mode.' && exit
 
 echo ---------------------------------------------------------------------
 echo This script will convert this system in read-only mode.
