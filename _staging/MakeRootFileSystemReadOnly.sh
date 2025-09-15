@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-08-22
+# Updated: 2025-09-14
 # Author: Benoit Bégin
 #
 # This script:
