@@ -53,11 +53,13 @@ sudo sed -i '/\S\s\s*\/\s\s*/{/\(ro,\|,ro\)/!s/\S\S*/&,ro/4}' /etc/fstab
 # We append the temporary file systems to fstab
 sudo tee -a /etc/fstab << 'EOF'
 
-tmpfs     /tmp                       tmpfs  defaults,noatime,nosuid,nodev                  0  0
-tmpfs     /var/tmp                   tmpfs  defaults,noatime,nosuid,nodev                  0  0
-tmpfs     /var/spool/mail            tmpfs  defaults,noatime,nosuid,nodev,noexec,size=25m  0  0
-tmpfs     /var/spool/rsyslog         tmpfs  defaults,noatime,nosuid,nodev,noexec,size=25m  0  0
-tmpfs     /var/log                   tmpfs  defaults,noatime,nosuid,nodev,noexec,size=50m  0  0
+tmpfs     /tmp                       tmpfs  defaults,noatime,nosuid,nodev                           0  0
+tmpfs     /var/tmp                   tmpfs  defaults,noatime,nosuid,nodev                           0  0
+tmpfs     /var/spool/mail            tmpfs  defaults,noatime,nosuid,nodev,noexec,size=25m           0  0
+tmpfs     /var/spool/rsyslog         tmpfs  defaults,noatime,nosuid,nodev,noexec,size=25m           0  0
+tmpfs     /var/log                   tmpfs  defaults,noatime,nosuid,nodev,noexec,size=50m           0  0
+tmpfs     /var/lib/logrotate         tmpfs  defaults,noatime,nosuid,nodev,noexec,size=1m,mode=0755  0  0
+tmpfs     /var/lib/sudo              tmpfs  defaults,noatime,nosuid,nodev,noexec,size=1m,mode=0700  0  0
 
 # Samba
 tmpfs     /var/lib/samba             tmpfs   nosuid,mode=0755,nodev         0  0
