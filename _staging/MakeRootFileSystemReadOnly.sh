@@ -108,10 +108,6 @@ EOF
 grep -q "sudo mount -o remount,ro /"     /etc/bash.bash_logout || echo 'sudo mount -o remount,ro /' | sudo tee -a /etc/bash.bash_logout
 grep -q "sudo mount -o remount,ro /boot/firmware" /etc/bash.bash_logout || echo 'sudo mount -o remount,ro /boot/firmware' | sudo tee -a /etc/bash.bash_logout
 
-# Alias ajustments
-sed -ie "s/^alias arcademode=.*$/alias arcademode=\'rw; sudo systemctl enable mame-autostart.service; ro\'/g" ~/.bash_aliases
-sed -ie "s/^alias servicemode=.*$/alias servicemode=\'rw; sudo systemctl disable mame-autostart.service; ro\'/g" ~/.bash_aliases
-
 # Swap file removal
 [ -f /var/swap ] && sudo rm /var/swap
 
