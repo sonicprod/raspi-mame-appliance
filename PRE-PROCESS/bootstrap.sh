@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-08-06
+# Updated: 2025-09-14
 # Author: Benoit Bégin
 # 
 # This is the "bootstrap" script that chain the "offline" preparation of the image and
@@ -67,8 +67,8 @@ echo "================== RaspiOSDaemonsInstall.sh =================="
 $BASEDIR/RaspiOSDaemonsInstall.sh
 echo "================== MakeDataPartitionAndMoveFiles.sh =================="
 $BASEDIR/MakeDataPartitionAndMoveFiles.sh
-# echo "================== MakeRootFileSystemReadOnly.sh =================="
-# $BASEDIR/MakeRootFileSystemReadOnly.sh
+echo "================== MakeRootFileSystemReadOnly.sh =================="
+$BASEDIR/MakeRootFileSystemReadOnly.sh
 
 # We disable the Systemd unit we we're launched from
 sudo systemctl disable bootstrap.service
