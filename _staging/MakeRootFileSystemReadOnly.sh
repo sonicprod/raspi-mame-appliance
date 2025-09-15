@@ -65,16 +65,18 @@ tmpfs     /var/spool/samba           tmpfs   nodev,nosuid              0       0
 tmpfs     /var/run/samba             tmpfs   nodev,nosuid              0       0
 EOF
 
-# Move some system files to temp filesystem
-sudo rm -rf /var/lib/dhcp /var/lib/dhcpcd5 /var/spool /etc/resolv.conf
-sudo ln -s /tmp /var/lib/dhcp
-sudo ln -s /tmp /var/lib/dhcpcd5
-sudo touch /tmp/dhcpcd.resolv.conf
-sudo ln -s /tmp/dhcpcd.resolv.conf /etc/resolv.conf
+# ------------------------------------------------------
+# NetworkManager stuff...
+# ------------------------------------------------------
+sudo sed -i '/plugins=ifupdown,keyfile/a\rc-manager=file' /etc/NetworkManager/NetworkManager.conf
+# Move some system files to tmpfs
+sudo mv /etc/resolv.conf /var/run/resolv.conf && sudo ln -s /var/run/resolv.conf /etc/resolv.conf
+sudo rm -rf /var/lib/dhcp && sudo ln -s /var/run /var/lib/dhcp
+sudo rm -rf /var/lib/NetworkManager && sudo ln -s /var/run /var/lib/NetworkManager
 
+# ------------------------------------------------------
 # Update the systemd random seed
-[ -f /var/lib/systemd/random-seed ] && sudo rm /var/lib/systemd/random-seed
-[ ! -L /var/lib/systemd/random-seed ] && sudo ln -s /tmp/random-seed /var/lib/systemd/random-seed
+sudo mv /var/lib/systemd/random-seed /tmp/systemd-random-seed && sudo ln -s /tmp/systemd-random-seed /var/lib/systemd/random-seed
 
 # Systemd drop-in to ajust systemd-random-seed.service
 if [ ! -f /etc/systemd/system/systemd-random-seed.service.d/readonlyfs-fixup.conf ]; then
