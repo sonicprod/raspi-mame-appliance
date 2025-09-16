@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updated: 2025-04-24
+# Updated: 2025-09-15
 # Author: Benoit Bégin
 #
 # This script update MAME to the latest version or a specific version.
@@ -154,6 +154,7 @@ else
             # Successful build!
             # We make sure the MAME environment variable is persistent...
             set_env SDL_VIDEODRIVER=kmsdrm
+            set_env SDL_AUDIODRIVER=alsa
             set_env SDL_RENDER_DRIVER=opengles2
             set_env SDL_RENDER_VSYNC=1
             set_env SDL_GRAB_KEYBOARD=1
