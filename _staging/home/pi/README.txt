@@ -3,6 +3,7 @@
 ===================================================
 
 This image is maintained by:   Sonic Prod
+Updated: 2025-09-15
 Official How-To: https://gist.github.com/sonicprod/f5a7bb10fb9ed1cc5124766831e120c4
 Pre-built image: http://forum.arcadecontrols.com/index.php/board,57.0.html
 
@@ -72,13 +73,13 @@ The system operates in two (2) modes:
   - One mode is for ROMs management, system updates, maintenance, etc., refered to as Service mode.
   - The other mode is dedicated to arcade emulation, refered to as Arcade mode.
 
-To toggle between modes, just use one of the corresponding commands (in read/write mode):
+To toggle between modes, just use one of the corresponding commands:
 
   mode service
      -or-
   mode arcade
 
-You then need to reboot, by issuing the following command:
+To take effect, you then need to reboot by issuing the following command:
 
   sudo reboot
 
