@@ -68,7 +68,7 @@ $BASEDIR/RaspiOSDaemonsInstall.sh
 echo "================== MakeDataPartitionAndMoveFiles.sh =================="
 $BASEDIR/MakeDataPartitionAndMoveFiles.sh
 echo "================== MakeRootFileSystemReadOnly.sh =================="
-$BASEDIR/MakeRootFileSystemReadOnly.sh
+# $BASEDIR/MakeRootFileSystemReadOnly.sh
 
 # We disable the Systemd unit we we're launched from
 sudo systemctl disable bootstrap.service
