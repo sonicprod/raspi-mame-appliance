@@ -40,6 +40,9 @@ alias frontend='upd(){ grep -q $1= ~/settings && sed -i "s/^$1=.*$/$2/g" $(readl
 
 # Alias to switch between Arcade Mode and Service Mode (and print the current mode, if no argument is specified)
 alias mode='_m() { [ -z "$1" ] && (echo -n "The system is currently in "; systemctl -q is-active mame-autostart.service && echo -n ARCADE || echo -n SERVICE; echo " mode."; echo -n " (configured = "; systemctl -q is-enabled mame-autostart.service && echo -n Arcade || echo -n Service; echo " mode)") || if [[ "${1,,}" =~ ^(arcade|service)$ ]]; then case "${1,,}" in arcade) [ "$(type -t rw)" = 'alias' ] && rw; sudo systemctl enable mame-autostart.service; [ "$(type -t ro)" = 'alias' ] && ro ;; service) [ "$(type -t rw)" = 'alias' ] && rw; sudo systemctl disable mame-autostart.service; [ "$(type -t ro)" = 'alias' ] && ro ;; esac; else echo "Usage: mode [arcade | service]"; fi; }; _m'
+EOF
+
+[ -f /etc/bash_completion.d/mode ] && sudo tee -a /etc/bash_completion.d/mode << 'EOF'
 _mode_complete() {
   COMPREPLY=($(compgen -W "arcade service" -- "${COMP_WORDS[1]}"))
   }
