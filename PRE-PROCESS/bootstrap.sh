@@ -73,6 +73,9 @@ echo "================== MakeRootFileSystemReadOnly.sh =================="
 # We disable the Systemd unit we we're launched from
 sudo systemctl disable bootstrap.service
 
+# Put the system initially to Service mode
+sudo systemctl disable mame-autostart.service
+
 # Cleanup, we remove the raspi-mame-appliance folder
 cd /home/pi
 sudo rm -R ./raspi-mame-appliance
