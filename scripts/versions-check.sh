@@ -27,7 +27,7 @@ function hypseus-check {
   HTMLTAG='<title>Release hypseus-singe'
   HYPSEUSPATH=/home/pi/hypseus
 
-  [ -x $HYPSEUSPATH/hypseus ] && export HYPSEUSVER=$($HYPSEUSPATH/hypseus -v | awk '/^\[version\]/{print $4}')
+  [ -x $HYPSEUSPATH/hypseus ] && export HYPSEUSVER=$($HYPSEUSPATH/hypseus -version | awk '/^\[version\]/{print $4}')
   if [ ! -z $HYPSEUSVER ]; then
     LATESTHYPSEUSVER=$(wget -q -O - $CHECKURL | grep "$HTMLTAG" | awk '{print $3}')
 
