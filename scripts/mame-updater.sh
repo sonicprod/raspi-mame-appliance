@@ -161,7 +161,7 @@ else
             set_env SDL_VIDEO_GLES2=1
 
             # Install MAME True-Type Liberation Sans font
-            sudo apt-get install fonts-liberation
+            sudo apt-get install fonts-liberation -y
 
             # MAME binary symlink creation or update
             if [ -L ~/mame ]; then rm ~/mame; fi
