@@ -45,10 +45,11 @@ function hypseus-check {
   }
 
 if [ -x $HOME/mame/mame ] || [ -x $HOME/hypseus/hypseus ]; then
-  echo '+---------------+-----------+-----------+'
-  echo '| EMULATOR      | CURRENT   | LATEST    |'
-  echo '+---------------+-----------+-----------+'
-  [ -x $HOME/mame/mame ]       && echo -n '| MAME          | '; mame-check    | awk '{ printf "%-9s | %-9s |\n", $1, $2}'
-  [ -x $HOME/hypseus/hypseus ] && echo -n '| Hypseus-Singe | '; hypseus-check | awk '{ printf "%-9s | %-9s |\n", $1, $2}'
-  echo '+---------------+-----------+-----------+'
+  echo '┌───────────────┬───────────┬───────────┐'
+  echo '│ EMULATOR      │ CURRENT   │ LATEST    │'
+  echo '├───────────────┼───────────┼───────────┤'
+  [ -x $HOME/mame/mame ]       && echo -n '│ MAME          │ '; mame-check    | awk '{ printf "%-9s │ %-9s │\n", $1, $2}'
+  [ -x $HOME/hypseus/hypseus ] && echo -n '│ Hypseus-Singe │ '; hypseus-check | awk '{ printf "%-9s │ %-9s │\n", $1, $2}'
+  echo '└───────────────┴───────────┴───────────┘'
 fi
+
